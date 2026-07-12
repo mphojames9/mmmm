@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1159,6 +1160,1206 @@
 
         <div class="omni-feature-grid">
             <div class="omni-btn-feature" onclick="openSoundSettingsModal()">
+                <img src="./images/HomeIcons/sound.png" alt="Sound" class="icon-img">
+            </div>
+            
+            <!-- WIRED TO DYNAMIC DAILY MISSIONS ENGINE PANEL -->
+            <div class="omni-btn-feature" onclick="openDailyMissionsModal()">
+                <img src="./images/HomeIcons/mission.png" alt="Mission" class="icon-img">
+            </div>
+            
+            <div class="omni-btn-feature" onclick="openRewardsModal()">
+                <img src="./images/HomeIcons/rewards.png" alt="Rewards" class="icon-img">
+            </div>
+            
+            <div class="omni-btn-feature" onclick="openTutorialModal()">
+                <img src="./images/HomeIcons/tutorial.png" alt="Tutorial" class="icon-img">
+            </div>
+
+            <div class="omni-btn-feature" onclick="openOmniModal('Daily Challenge', '🔥 Hard Mode Activated!<br><br>Beat today\'s grid in under 2 minutes for 1000 Coins.')">
+                <img src="./images/HomeIcons/challenge.png" alt="Challenge" class="icon-img">
+            </div>
+
+            <div class="omni-btn-feature" onclick="openOmniModal('Leaderboard', '🏆 1st: Guest_8492 (9400 pts)<br>🥈 2nd: WordKing (8100 pts)<br>🥉 3rd: You (7500 pts)')">
+                <img src="./images/HomeIcons/ranks.png" alt="Ranks" class="icon-img">
+            </div>
+
+<div class="omni-btn-feature premium-glow" onclick="initiateDailyMission()">
+    <img src="./images/HomeIcons/daily.png" alt="Daily Mission" class="icon-img">
+</div>
+
+            <div class="omni-btn-feature" onclick="openDynamicStatsModal()">
+                <img src="./images/HomeIcons/stars.png" alt="Stars" class="icon-img">
+            </div>
+
+            <div class="omni-btn-feature" onclick="openOmniModal('More Games', '🎮 Craving more puzzles?<br><br>Check out our Sudoku and Crossword premium apps!')">
+                <img src="./images/HomeIcons/more.png" alt="More" class="icon-img">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="omni-modal-wrapper" id="omni-master-modal">
+    <div class="omni-modal-card">
+        <div class="omni-modal-title" id="omni-modal-title">Title</div>
+        <div class="omni-modal-body" id="omni-modal-body">Content goes here</div>
+        <button class="omni-btn-close" onclick="closeOmniModal()">Got it!</button>
+    </div>
+</div>
+
+<div class="omni-tutorial-wrapper" id="omni-tutorial-modal">
+    <div class="omni-tutorial-card">
+        <div class="tutorial-header">
+            <h2 class="tutorial-title">How to Play</h2>
+            <p style="color: #7a9c9f; font-size: 13px; font-weight: 700;">Master the grid in 3 simple steps</p>
+        </div>
+        <div class="tutorial-step">
+            <div class="tutorial-icon">👆</div>
+            <div class="tutorial-text">
+                <h3>Swipe to Connect</h3>
+                <p>Tap and drag your finger across the letters horizontally, vertically, or diagonally to highlight a word.</p>
+            </div>
+        </div>
+        <div class="tutorial-step">
+            <div class="tutorial-icon">✨</div>
+            <div class="tutorial-text">
+                <h3>Find Extra Words</h3>
+                <p>Find hidden words that aren't on your list! Fill up the bonus meter at the end of the level for a massive coin payout.</p>
+            </div>
+        </div>
+        <div class="tutorial-step">
+            <div class="tutorial-icon">⚡</div>
+            <div class="tutorial-text">
+                <h3>Use Power-Ups</h3>
+                <p>Stuck? Spend your coins on the <b>Hint</b> (reveals the first letter) or the <b>Magic Wand</b> (highlights the entire word).</p>
+            </div>
+        </div>
+        <button class="btn-start-playing" onclick="closeTutorialModal()">Let's Play!</button>
+    </div>
+</div>
+
+<div class="rewards-wrapper" id="premium-rewards-modal">
+    <div class="rewards-card">
+        <div class="rewards-header">
+            <h2 class="rewards-title">Daily Rewards</h2>
+            <p style="color: #7a9c9f; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Claim your premium loot</p>
+        </div>
+        <div class="rewards-grid">
+            <div class="reward-day claimed">
+                <img src="images/coin.png" class="reward-day-img" alt="Coins">
+                <span class="reward-day-value">50</span>
+                <span class="reward-day-label">Day 1</span>
+            </div>
+            <div class="reward-day active">
+                <img src="images/coin.png" class="reward-day-img" alt="Coins">
+                <span class="reward-day-value">100</span>
+                <span class="reward-day-label">Day 2</span>
+            </div>
+            <div class="reward-day">
+                <img src="images/hint.png" class="reward-day-img" alt="Hint">
+                <span class="reward-day-value">1x</span>
+                <span class="reward-day-label">Day 3</span>
+            </div>
+            <div class="reward-day">
+                <img src="images/coin.png" class="reward-day-img" alt="Coins">
+                <span class="reward-day-value">150</span>
+                <span class="reward-day-label">Day 4</span>
+            </div>
+            <div class="reward-day">
+                <img src="images/magic.png" class="reward-day-img" alt="Magic Wand">
+                <span class="reward-day-value">1x</span>
+                <span class="reward-day-label">Day 5</span>
+            </div>
+            <div class="reward-day">
+                <img src="images/coin.png" class="reward-day-img" alt="Coins">
+                <span class="reward-day-value">250</span>
+                <span class="reward-day-label">Day 6</span>
+            </div>
+            <div class="reward-day-7">
+                <img src="image_65c300.jpg" class="day-7-chest" alt="Premium Chest">
+                <div class="day-7-info">
+                    <div class="day-7-label">Day 7 Grand Prize</div>
+                    <div class="day-7-value">1000 Coins</div>
+                    <div class="day-7-subtext">+ 3 Magic Wands</div>
+                </div>
+            </div>
+        </div>
+        <button class="btn-claim-master" onclick="claimDailyReward()">Claim Day 2 Reward</button>
+        <button class="omni-btn-close" style="margin-top: 0;" onclick="closeRewardsModal()">Come Back Tomorrow</button>
+    </div>
+</div>
+
+<script src="sounds.js"></script>
+<script src="app.js"></script>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Word Search</title>
+    <link rel="stylesheet" href="./modal.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght=600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Base Card Configuration */
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --gold: #f4c053;
+            --bronze: #dca353;
+            
+            /* Static Premium Theme (Locked in) */
+            --theme-bg: linear-gradient(135deg, #e0f2f1 0%, #bbdefb 100%);
+            --theme-text: #3d5a5c;
+            --theme-accent: #ff7e5f;
+            --theme-accent-gradient: linear-gradient(135deg, #ff7e5f, #feb47b);
+            
+            /* High-Contrast Word Selection Layer Colors */
+            --color-1: rgba(144, 190, 240, 0.7);
+            --color-2: rgba(250, 220, 140, 0.7);
+            --color-3: rgba(240, 160, 180, 0.7);
+            --color-4: rgba(160, 220, 160, 0.7);
+            --color-5: rgba(200, 170, 240, 0.7);
+            --color-6: rgba(120, 210, 210, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            height: 100vh; 
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; 
+            color: var(--theme-text);
+            
+            background-image: 
+                linear-gradient(135deg, rgba(61, 90, 92, 0.26) 0%, rgba(20, 30, 40, 0.5) 100%),
+                url('images/nature.png');
+                
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-blend-mode: normal; 
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            gap: 8px;
+        }
+
+        /* Header Layout */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .level-badge {
+            background: var(--theme-accent-gradient);
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 6px 16px rgba(255, 126, 95, 0.3),   
+                inset 0 2px 5px rgba(255, 255, 255, 0.8), 
+                inset 0 -3px 6px rgba(0, 0, 0, 0.25); 
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+            cursor: default;
+        }
+
+        .level-badge::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent
+            );
+            transform: skewX(-20deg);
+            animation: premium-shimmer 4s infinite;
+        }
+
+        @keyframes premium-shimmer {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            color: var(--theme-text);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 800;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-icon:active {
+            transform: translateY(1px);
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px; 
+            background: rgba(255, 255, 255, 0.85); 
+            padding: 6px 16px; 
+            border-radius: 30px;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.08),       
+                inset 0 2px 4px rgba(255, 255, 255, 1), 
+                inset 0 -3px 6px rgba(0, 0, 0, 0.05);   
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .icon-trophy { background: var(--bronze); }
+        .icon-coin { background: var(--gold); }
+        
+        .stat-values {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: #7a9c9f;
+            text-transform: uppercase;
+        }
+
+        .stat-num {
+            font-size: 13px;
+        }
+
+        .category-chip {
+            background: var(--theme-accent-gradient);
+            padding: 6px 18px; 
+            border-top-right-radius: 12px;
+            border-top-left-radius: 12px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            box-shadow: 
+                0 -4px 12px rgba(255, 126, 95, 0.25), 
+                inset 0 2px 5px rgba(255, 255, 255, 0.7), 
+                inset 0 -3px 6px rgba(0, 0, 0, 0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-bottom: none; 
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .word-list-card {
+            background: var(--card-bg);
+            border-bottom-right-radius: 12px;
+            border-bottom-left-radius: 12px;
+            padding: 10px;
+            flex-shrink: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 16px;
+            overflow-y: auto;
+            max-height: 65px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-top: none; 
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.05),         
+                inset 0 1px 2px rgba(255, 255, 255, 1), 
+                inset 0 -3px 6px rgba(0, 0, 0, 0.05);   
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .word-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .word-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .board-wrapper {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+        }
+
+        .board-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 12px;
+            position: relative;
+            width: 100%;
+            max-width: 440px; 
+            aspect-ratio: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 16px 32px rgba(0, 0, 0, 0.08),        
+                0 4px 8px rgba(0, 0, 0, 0.04),          
+                inset 0 2px 5px rgba(255, 255, 255, 1), 
+                inset 0 -4px 8px rgba(0, 0, 0, 0.06);   
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .letter-grid {
+            display: grid;
+            gap: 2px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .letter-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(11px, 3.8vw, 18px);
+            font-weight: 800;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: transform 0.1s;
+        }
+
+        .highlights-container {
+            position: absolute;
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .highlight-pill {
+            position: absolute;
+            border-radius: 50px;
+            transform-origin: left center;
+            transition: opacity 0.2s, background-color 0.3s;
+        }
+        
+        .hint-pulse {
+            animation: pulse 1s infinite;
+            background-color: var(--theme-accent) !important;
+            color: white;
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 var(--theme-accent); transform: scale(1); opacity: 0.8; }
+            50% { box-shadow: 0 0 0 10px transparent; transform: scale(1.15); opacity: 1; }
+            100% { box-shadow: 0 0 0 0 transparent; transform: scale(1); opacity: 0.8; }
+        }
+
+        .overlay-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(45, 65, 75, 0.45) 0%, rgba(12, 18, 24, 0.8) 100%); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .overlay-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .overlay-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(242, 247, 250, 0.88) 100%);
+            border-radius: 28px;
+            padding: 40px 28px;
+            width: 92%;
+            max-width: 380px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+            transform: translateY(40px) scale(0.92);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 35px 70px rgba(0, 0, 0, 0.25),        
+                0 10px 20px rgba(0, 0, 0, 0.1),         
+                inset 0 3px 6px rgba(255, 255, 255, 1), 
+                inset 0 -4px 10px rgba(0, 0, 0, 0.05);  
+        }
+
+        .overlay-backdrop.active .overlay-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .overlay-title {
+            font-size: 30px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 50%, #f4c053 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            margin: 0;
+            filter: drop-shadow(0 3px 6px rgba(255, 107, 107, 0.25));
+        }
+
+        .score-breakdown {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0.005) 100%);
+            border-radius: 22px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 
+                inset 0 4px 14px rgba(0, 0, 0, 0.07),  
+                0 1px 2px rgba(255, 255, 255, 0.9);    
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #5a7c7f;
+        }
+
+        .extra-words-panel {
+            border-top: 1px dashed rgba(0, 0, 0, 0.08);
+            padding-top: 20px;
+        }
+
+        .bonus-reward-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #7a9c9f;
+            transition: all 0.3s ease;
+        }
+
+        .bonus-reward-text.achieved {
+            background: linear-gradient(135deg, #f4c053, #dca353);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            animation: advanced-bonus-glow 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes advanced-bonus-glow {
+            0% { transform: scale(1); filter: drop-shadow(0 2px 4px rgba(244, 192, 83, 0.2)); }
+            100% { transform: scale(1.04); filter: drop-shadow(0 4px 12px rgba(244, 192, 83, 0.5)); }
+        }
+
+        .btn-next-level {
+            background: var(--theme-accent-gradient);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 18px;
+            border-radius: 18px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 10px 24px rgba(255, 126, 95, 0.35), 
+                inset 0 2px 4px rgba(255, 255, 255, 0.6),
+                inset 0 -4px 0 rgba(0, 0, 0, 0.18); 
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .premium-arrow-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            padding: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.5), 
+                0 2px 4px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .premium-arrow-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+        }
+
+        .btn-next-level:hover .premium-arrow-icon {
+            transform: translateX(5px) scale(1.08);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.7), 
+                0 4px 10px rgba(255, 126, 95, 0.2);
+        }
+
+        .btn-next-level:active .premium-arrow-icon {
+            transform: translateX(1px) scale(0.95);
+        }
+
+        @media (max-width: 350px) {
+            .power-ups-bar { gap: 6px; }
+            .btn-powerup { padding: 8px 10px; font-size: 11px; }
+            .stat-num { font-size: 11px; }
+            .level-badge { font-size: 11px; padding: 4px 10px; }
+            .category-chip { font-size: 11px; padding: 3px 10px; }
+        }
+
+        .stat-icon {
+            width: 34px;  
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent !important; 
+            border-radius: 50%; 
+        }
+
+        .stat-icon img {
+            border-radius: 50%; 
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08));
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-icon img {
+            width: 115%;
+            height: 115%;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        .power-ups-bar {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: flex-end; 
+            align-items: center;
+            gap: 14px;
+            padding: 10px 16px;
+        }
+
+        .btn-powerup {
+            width: 54px;
+            height: 54px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 
+                0 6px 16px rgba(0, 0, 0, 0.07),
+                inset 0 1px 1px rgba(255, 255, 255, 0.8),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.08);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+        }
+
+        .powerup-img {
+            width: 110%;
+            height: 110%;
+            object-fit: contain;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.15));
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .btn-powerup:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), inset 0 2px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-powerup .cost {
+            position: absolute;
+            bottom: -3px;
+            right: -4px;
+            z-index: 2;
+            background: linear-gradient(135deg, #ff416c, #d32f2f);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 0.3px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(211, 47, 47, 0.45);
+            pointer-events: none;
+        }
+
+        .btn-powerup:disabled .powerup-img {
+            filter: grayscale(1) opacity(0.6);
+        }
+
+        @keyframes word-found-pop {
+            0% { transform: scale(1); opacity: 1; color: var(--gold); }
+            50% { transform: scale(1.3); opacity: 1; color: var(--theme-accent); }
+            100% { transform: scale(0.95); opacity: 0.3; }
+        }
+
+        .flying-star {
+            position: fixed;
+            pointer-events: none; 
+            z-index: 9999;
+            font-size: 28px;
+            filter: drop-shadow(0 0 10px rgba(244, 192, 83, 0.8));
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .premium-progress-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin: 24px auto 14px auto;
+            width: 88%;
+            padding-right: 12px; 
+        }
+
+        .premium-progress-track {
+            flex-grow: 1;
+            height: 14px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: 
+                inset 0 3px 6px rgba(0, 0, 0, 0.16),
+                inset 0 1px 1px rgba(0, 0, 0, 0.1),
+                0 1px 1px rgba(255, 255, 255, 0.9); 
+        }
+
+        .premium-progress-fluid {
+            height: 100%;
+            width: 0%; 
+            background: linear-gradient(90deg, #2ecc71 0%, #26af5f 100%);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 
+                0 0 12px rgba(46, 204, 113, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            transition: width 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .fluid-gloss-sheen {
+            position: absolute;
+            top: 1px; left: 0; right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .premium-reward-node {
+            position: absolute;
+            right: -14px;
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ffffff 0%, #f4f7f6 100%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0; 
+            box-shadow: 
+                0 6px 14px rgba(0, 0, 0, 0.08),
+                inset 0 2px 3px rgba(255, 255, 255, 1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.03);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .premium-reward-node svg {
+            width: 20px;
+            height: 20px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
+            transition: transform 0.3s ease;
+        }
+
+        .premium-reward-node.unlocked {
+            background: linear-gradient(135deg, #f4c053 0%, #e5ad3c 100%);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            box-shadow: 
+                0 10px 20px rgba(244, 192, 83, 0.4),
+                inset 0 2px 3px rgba(255, 255, 255, 0.6),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.1);
+            animation: reward-pulsate-lux 1.4s infinite alternate ease-in-out;
+        }
+
+        @keyframes reward-pulsate-lux {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); box-shadow: 0 12px 26px rgba(244, 192, 83, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.6); }
+        }
+
+        .extra-words-counter {
+            font-size: 24px; 
+            font-weight: 800;
+            color: var(--theme-text);
+            margin-top: 10px;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        .counter-divider {
+            color: #a0aec0;
+            font-weight: 400;
+            margin: 0 2px;
+        }
+
+        .coin-blast-graphic {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            margin: -90px auto -10px auto; 
+            display: block;
+            filter: drop-shadow(0 15px 25px rgba(244, 192, 83, 0.6)) drop-shadow(0 30px 60px rgba(0, 0, 0, 0.3));
+            animation: premium-coin-float 4s ease-in-out infinite alternate, premium-coin-entrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform-origin: center bottom;
+            z-index: 10;
+            position: relative;
+        }
+
+        @keyframes premium-coin-entrance {
+            0% { transform: scale(0) rotate(-15deg); filter: brightness(2) drop-shadow(0 0 0 transparent); }
+            70% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes premium-coin-float {
+            0% { transform: translateY(0) rotate(0deg); filter: drop-shadow(0 15px 25px rgba(244, 192, 83, 0.5)); }
+            100% { transform: translateY(-12px) rotate(2deg); filter: drop-shadow(0 25px 35px rgba(244, 192, 83, 0.7)); }
+        }
+
+        .kinetic-flying-coin {
+            position: fixed;
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            z-index: 1002;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.22));
+            pointer-events: none;
+            transition: transform 0.75s cubic-bezier(0.25, 1, 0.5, 1), top 0.75s cubic-bezier(0.5, 0, 0.75, 0), left 0.75s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.75s ease;
+        }
+
+        .coin-stat-active-pulse {
+            animation: header-coin-pulse-engine 0.4s ease-out alternate 3;
+        }
+
+        @keyframes header-coin-pulse-engine {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.35); color: #f4c053; filter: drop-shadow(0 0 12px rgba(244, 192, 83, 0.8)); }
+        }
+
+        .premium-stars-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: -10px 0 10px 0;
+        }
+
+        .star-icon {
+            width: 44px;
+            height: 44px;
+            fill: #cbd5e1; 
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transform: scale(0); 
+            opacity: 0;
+            transition: fill 0.3s ease, filter 0.3s ease;
+        }
+
+        #star-2 {
+            width: 54px;
+            height: 54px;
+            margin-top: -16px;
+        }
+
+        .star-icon.filled {
+            fill: #f4c053;
+            filter: drop-shadow(0 6px 16px rgba(244, 192, 83, 0.65));
+        }
+
+        .star-icon.animate-pop {
+            animation: star-elastic-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes star-elastic-pop {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(15deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .omni-btn-feature .icon-img {
+            width: 110%;
+            height: 110%;
+            object-fit: contain; 
+        }
+
+        /* PREMIUM DYNAMIC MISSION LIST STYLING */
+        .premium-mission-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 4px;
+            text-align: left;
+        }
+
+        .premium-mission-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(245,249,250,0.85) 100%);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03), inset 0 2px 4px rgba(255,255,255,1);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .premium-mission-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .mission-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mission-title-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--theme-text);
+        }
+
+        .mission-reward-pill {
+            background: rgba(244, 192, 83, 0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: #d49e2a;
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .mission-rail {
+            height: 8px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mission-fluid {
+            height: 100%;
+            background: linear-gradient(90deg, #ff7e5f, #f4c053);
+            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+
+        .mission-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #7a9c9f;
+        }
+
+        .btn-claim-mission {
+            background: var(--theme-accent-gradient);
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255,126,95,0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-claim-mission:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Add this to your CSS */
+.locked-btn {
+    opacity: 0.3 !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    filter: grayscale(100%) !important;
+}
+
+.btn-resume {
+    /* Studio-Grade Sizing & Typography */
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #ffffff;
+    
+    /* Modern Orange Gradient & Shape */
+    background: linear-gradient(135deg, #ff6b35 0%, #ff9f1c 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    
+    /* Luminescent Depth */
+    box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                
+    /* Smooth Kinetic Transitions */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    width: 100%; /* Adjust or remove depending on your container */
+}
+
+
+/* Active/Click State: Press down */
+.btn-resume:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(255, 107, 53, 0.3);
+}
+    </style>
+</head>
+<body>
+
+<canvas id="premium-confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1001; display: none;"></canvas>
+<div id="coin-fountain-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1002;"></div>
+
+<div class="game-container">
+    <div class="header">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="btn-icon" id="btn-back" onclick="history.back()" title="Go Back">
+                <img src="images/back.png" alt="Back">
+            </button>
+            <div class="level-badge">Level <span id="level-val">1</span></div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-icon icon-trophy">
+                    <img src="images/score.png" alt="Score Trophy">
+                </div>
+                <div class="stat-values">
+                    <span class="stat-label">Score</span>
+                    <span class="stat-num" id="score-val">0</span>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon icon-coin">
+                    <img src="images/coin.png" alt="Coins">
+                </div>
+                <div class="stat-values">
+                    <span class="stat-label">Coins</span>
+                    <span class="stat-num" id="coins-val">350</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-banner">
+        <div class="category-chip" id="category-text">Animals</div>
+        <div class="word-list-card" id="word-list"></div> 
+    </div>
+
+    <div class="board-wrapper">
+        <div class="board-card">
+            <div class="highlights-container" id="highlights"></div>
+            <div class="letter-grid" id="board"></div>
+        </div>
+    </div>
+
+    <div class="power-ups-bar">
+        <button class="btn-powerup" id="btn-hint" onclick="useHint()" title="Hint (-50 Coins)">
+            <img src="images/hint.png" alt="Hint" class="powerup-img">
+            <span class="cost">50 <img src="images/coin.png"></span>
+        </button>
+
+        <button class="btn-powerup" id="btn-wand" onclick="useWand()" title="Magic Wand (-150 Coins)">
+            <img src="images/magic.png" alt="Magic Wand" class="powerup-img">
+            <span class="cost">150 <img src="images/coin.png"></span>
+        </button>
+
+        <button class="btn-powerup" onclick="openSoundSettingsModal()" title="Sound Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--theme-text); width: 60%; height: 60%; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.15));">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+
+        <button class="btn-powerup btn-reload" onclick="resetSaveAndReload()" title="Reload Board">
+            <img src="images/repeat.png" alt="Reload" class="powerup-img">
+        </button>
+    </div>
+</div>
+
+<div class="overlay-backdrop" id="level-complete-overlay">
+    <div class="overlay-card">
+        <div id="bonus-image-showcase"></div>
+        <h2 class="overlay-title">Level Complete!</h2>
+        
+        <div class="premium-stars-container">
+            <svg class="star-icon" id="star-1" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-icon" id="star-2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-icon" id="star-3" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        
+        <div class="score-breakdown">
+            <div class="score-row">
+                <span>Base Score</span>
+                <span id="overlay-base-score" style="font-weight: 800; color: var(--theme-text);">+0</span>
+            </div>
+            
+            <div class="extra-words-panel">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 12px;">
+                    Extra Words Found
+                </div>
+                
+                <div class="premium-progress-wrapper">
+                    <div class="premium-progress-track">
+                        <div class="premium-progress-fluid" id="overlay-progress-bar" style="width: 40%;">
+                            <div class="fluid-gloss-sheen"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="premium-reward-node" id="overlay-reward-node">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6V9Zm0 0v8a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4V9M6 9h12M18 9h1.5a2.5 2.5 0 0 0 0-5H18V9Zm-6 12v2m-4 0h8" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="extra-words-counter">
+                    <span id="overlay-extra-count">4</span> <span class="counter-divider">/</span> 10
+                </div>
+                
+                <div id="overlay-bonus-reward" class="bonus-reward-text">Find 10 for a 500 Coin Bonus!</div>
+            </div>
+        </div>
+
+        <button class="btn-next-level" onclick="startNextLevel()">
+            <span>Continue to Next Level</span>
+            <span class="premium-arrow-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="omni-welcome-portal active" id="omni-start-screen">
+    <div class="omni-dashboard-card">
+        <div style="text-align: center;">
+            <img src="./images/logo.png" alt="Word Search Premium Edition" style="max-width: 100px; width: 100%; height: auto; display: block; margin: 0 auto;">
+        </div>
+
+        <button class="btn-next-level" onclick="bootGameFromOmni()" style="width: 100%; padding: 20px; font-size: 20px;">
+            <span id="omni-play-text">Play Now</span>
+            <span class="premium-arrow-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+
+        <div class="omni-feature-grid">
+            <div class="omni-btn-feature" onclick="openSoundSettingsModal()">
                 <img src="./images/HomeIcons/Sound.png" alt="Sound" class="icon-img">
             </div>
             
@@ -1291,4 +2492,5 @@
 <script src="sounds.js"></script>
 <script src="app.js"></script>
 </body>
+>>>>>>> aa3dc911ba6058ba713a76e939682b1ad646c74b
 </html>
