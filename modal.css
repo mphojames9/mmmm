@@ -849,3 +849,580 @@
 }
 .footer-pulse { color: #2ed573; animation: cleanPulse 2s infinite; }
 @keyframes cleanPulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+
+/* Clean container layout */
+.premium-mission-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 4px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Row-based sleek card structure */
+.premium-mission-row {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #14141f;
+    border: 1px solid #252538;
+    border-radius: 8px;
+    padding: 12px 16px 16px 16px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+/* Subtle gold border glow only when a mission is complete and unclaimed */
+.premium-mission-row.mission-ready {
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.05);
+}
+
+/* Dim styling for claimed states */
+.premium-mission-row.mission-claimed {
+    opacity: 0.4;
+    background: #0f0f16;
+}
+
+/* Text clustering */
+.mission-left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 65%;
+}
+
+.mission-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.mission-progress-counter {
+    font-size: 0.75rem;
+    color: #8e8e9f;
+}
+
+
+/* REWARD IMAGE FIX: Strict constraints to keep it tiny and crisp */
+.mission-reward-inline {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.premium-coin-thumb {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    min-height: 18px;
+    object-fit: contain;
+    display: inline-block;
+}
+
+.premium-reward-val {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+/* Compact Premium Button */
+.btn-premium-action {
+    background: linear-gradient(135deg, #ffd700 0%, #e6be00 100%);
+    color: #0b0b11;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.2s ease;
+}
+
+.btn-premium-action:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+.btn-premium-action:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.btn-premium-action:disabled {
+    background: #222230;
+    color: #57576b;
+    cursor: not-allowed;
+}
+
+/* Ultra-thin bottom progress indicator */
+.mission-mini-rail {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.mission-mini-fluid {
+    height: 100%;
+    background: linear-gradient(90deg, #ffa500, #ffd700);
+    transition: width 0.3s ease-out;
+}
+
+/* Main List Container */
+.mission-ui-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+    background: #1e1f29; /* Deep background behind the cards */
+    border-radius: 12px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Individual Mission Card */
+.mission-ui-card {
+    display: flex;
+    align-items: center;
+    background: #2b2d3c; /* Lighter card background */
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    gap: 12px;
+}
+
+/* Left Icon Box */
+.mission-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background: #1a1b24;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.mission-icon-placeholder {
+    font-size: 24px;
+}
+
+/* Center Column (Title & Progress) */
+.mission-center-col {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+}
+
+.mission-ui-title {
+    color: #f8f9fa; /* Slightly softer, richer white than pure #fff */
+    font-size: 0.85rem; /* Noticeably smaller */
+    font-weight: 700;
+    font-family: 'Montserrat', 'Inter', 'Segoe UI', 'Helvetica Neue', sans-serif; /* Premium modern font stack */
+    letter-spacing: 0.8px; /* Wider spacing for a sleek feel */
+    text-transform: uppercase; /* Makes small text look like a high-end label */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); /* Subtle drop shadow for game-like depth */
+}
+
+/* The Thick Progress Bar */
+.mission-ui-track {
+    position: relative;
+    width: 100%;
+    height: 22px;
+    background: #171822; /* Very dark inner track */
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.mission-ui-fill {
+    height: 100%;
+    background: linear-gradient(180deg, #64e336 0%, #46a025 100%); /* Chunky green gradient */
+    border-radius: 20px;
+    transition: width 0.3s ease-in-out;
+}
+
+.mission-ui-progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    z-index: 2;
+}
+
+
+
+/* Reward Stack */
+.mission-reward-stack {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ui-coin-icon {
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: contain;
+}
+
+
+
+/* The Buttons */
+.ui-mission-btn {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.3); /* Bottom heavy drop shadow for clicky feel */
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.ui-mission-btn:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 rgba(0,0,0,0.3);
+}
+
+/* Ready to Claim (Green) */
+.btn-ready {
+    background: linear-gradient(180deg, #64e336 0%, #46a025 100%);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Locked (Grey) */
+.btn-locked {
+    background: #4a4d65;
+    color: #8c8f9f;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    cursor: not-allowed;
+}
+
+/* Claimed State */
+.btn-claimed {
+    background: #2b2d3c;
+    color: #555768;
+    box-shadow: none;
+    cursor: not-allowed;
+    border: 1px solid #4a4d65;
+}
+
+/* Right Column Alignment */
+.mission-right-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 90px;
+    flex-shrink: 0;
+}
+
+/* Premium 3D Encased Reward Slot */
+.mission-reward-vault {
+    background: #14151f; /* Dark inset background */
+    border-radius: 6px;
+    padding: 2px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.reward-vault-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: linear-gradient(180deg, rgba(43, 45, 60, 0.6) 0%, rgba(26, 27, 36, 0.6) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 4px;
+    padding: 4px 6px;
+}
+
+/* Micro-Coin Icon with a subtle drop shadow to lift it */
+.ui-coin-icon.3d-pop {
+    width: 16px !important;
+    height: 16px !important;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+}
+
+/* Premium Reward Typography */
+.ui-reward-text {
+    color: #ffcc00;
+    font-size: 0.85rem;
+    font-weight: 900;
+    font-family: 'Montserrat', 'Inter', sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.5px;
+}
+
+/* --- THE TRUE 3D BUTTON ENGINE --- */
+.ui-mission-btn-3d {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    outline-offset: 4px;
+    transition: filter 250ms;
+}
+
+/* Inner text wrapper acting as the 3D top-plate */
+.btn-3d-text {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transform: translateY(-4px); /* Pushes the face up to create the 3D gap */
+    transition: transform 100ms ease;
+}
+
+/* BUTTON STATE: READY (3D Chunky Green) */
+.btn-ready .btn-3d-text {
+    background: linear-gradient(180deg, #73f040 0%, #4ca828 100%);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,0.4) inset, /* Top inner lighting glint */
+        0 4px 0 #2d6b16, /* The solid 3D extruded side block */
+        0 5px 6px rgba(0, 0, 0, 0.5); /* Ambient shadow underneath */
+}
+
+.btn-ready:hover .btn-3d-text {
+    filter: brightness(1.1);
+    transform: translateY(-5px); /* Lift slightly more on hover */
+}
+
+/* BUTTON STATE: LOCKED (3D Matte Slate) */
+.btn-locked .btn-3d-text {
+    background: linear-gradient(180deg, #4e5169 0%, #35374a 100%);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,0.1) inset,
+        0 4px 0 #212230,
+        0 5px 6px rgba(0, 0, 0, 0.3);
+    color: #83869c;
+}
+.btn-locked {
+    cursor: not-allowed;
+}
+
+/* BUTTON STATE: CLAIMED (Flat Embedded) */
+.btn-claimed .btn-3d-text {
+    background: #1d1e28;
+    color: #4b4d5e;
+    transform: translateY(0); /* Sits completely flat */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); /* Sunken shadow */
+    border: 1px solid #2b2d3c;
+}
+.btn-claimed {
+    cursor: not-allowed;
+}
+
+/* PHYSICAL CLICK EFFECT */
+.ui-mission-btn-3d:active:not(.btn-locked):not(.btn-claimed) .btn-3d-text {
+    transform: translateY(-1px); /* Compresses the 3D spring downward */
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 1px 0 #2d6b16, /* Reduces side thickness */
+        0 2px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Container Layout */
+.premium-settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 6px;
+    background: #1e1f29;
+    border-radius: 12px;
+}
+
+/* Base Card Layer */
+.settings-control-card {
+    background: #2b2d3c;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Header Text Alignments */
+.settings-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-label-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.settings-title-text {
+    color: #f8f9fa;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Montserrat', 'Inter', sans-serif;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.settings-sub-text {
+    color: #ffcc00;
+    font-family: 'Montserrat', monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+/* Premium Slider Housing Track */
+.slider-vault {
+    background: #14151f;
+    border-radius: 20px;
+    padding: 6px 12px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+/* Range Input Core Reset */
+.premium-range-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.premium-range-slider:focus {
+    outline: none;
+}
+
+/* Slider Track Details */
+.premium-range-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    background: #1a1b24;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+}
+
+/* PREMIUM 3D METALLIC SLIDER KNOB (WebKit) */
+.premium-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 22px;
+    width: 22px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffffff 0%, #a6afb8 100%);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,1) inset,
+        0 3px 0 #5c646d,
+        0 4px 5px rgba(0,0,0,0.6);
+    margin-top: -7px;
+    transition: transform 0.1s, filter 0.1s;
+}
+
+.premium-range-slider::-webkit-slider-thumb:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
+}
+
+/* PREMIUM 3D METALLIC SLIDER KNOB (Firefox) */
+.premium-range-slider::-moz-range-thumb {
+    height: 22px;
+    width: 22px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffffff 0%, #a6afb8 100%);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,1) inset,
+        0 3px 0 #5c646d,
+        0 4px 5px rgba(0,0,0,0.6);
+    transition: transform 0.1s, filter 0.1s;
+}
+
+.premium-range-slider::-moz-range-thumb:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
+}
+
+/* 3D TOGGLE BUTTON ENGINE */
+.ui-toggle-btn-3d {
+    position: relative;
+    width: 60px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.toggle-3d-face {
+    display: block;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: white;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transform: translateY(-3px);
+    transition: transform 100ms ease;
+}
+
+/* STATE: ON (3D Vibrant Green) */
+.toggle-on .toggle-3d-face {
+    background: linear-gradient(180deg, #73f040 0%, #4ca828 100%);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 3px 0 #2d6b16,
+        0 4px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* STATE: OFF (3D Crimson Red) */
+.toggle-off .toggle-3d-face {
+    background: linear-gradient(180deg, #ff5252 0%, #c62828 100%);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 3px 0 #8e1c1c,
+        0 4px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Physical Action Click */
+.ui-toggle-btn-3d:active .toggle-3d-face {
+    transform: translateY(0);
+    box-shadow: 
+        0 1px 0 rgba(255,255,255,0.2) inset,
+        0 0px 0 transparent,
+        0 1px 2px rgba(0, 0, 0, 0.4);
+}

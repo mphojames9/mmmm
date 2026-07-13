@@ -126,15 +126,12 @@ const overlayBaseScoreEl = document.getElementById('overlay-base-score');
 const overlayExtraCountEl = document.getElementById('overlay-extra-count');
 const overlayBonusRewardEl = document.getElementById('overlay-bonus-reward');
 
-// === INTERNET NETWORK DURATION MONITOR TRACKING LOOP ===
 setInterval(() => {
     if (navigator.onLine) {
         let netMission = dailyMissions.find(m => m.id === 'internetTime');
         if (netMission && !netMission.claimed && netMission.progress < netMission.target) {
             netMission.progress++;
-            if (netMission.progress % 15 === 0) { // Save every 15 seconds to prevent excessive writes
-                saveGameDaily();
-            }
+            if (netMission.progress % 15 === 0) saveGameDaily(); 
         }
     }
 }, 1000);
@@ -935,9 +932,9 @@ function executeWand(isFree) {
 window.grantAdReward = function(powerupType) {
     // WIRING: Update Ad Watching Mission Count
     let adsMission = dailyMissions.find(m => m.id === 'watchAds');
-    if (adsMission && adsMission.progress < adsMission.target) {
-        adsMission.progress++;
-    }
+if (adsMission && adsMission.progress < adsMission.target) {
+    adsMission.progress++;
+}
     if (isDailyMissionActive) saveGameDaily(); else saveGame();
 
     if (powerupType === 'hint') {
@@ -993,27 +990,26 @@ function showLevelComplete() {
     if(levelTimerEngineInterval) clearInterval(levelTimerEngineInterval);
     if (typeof audioEngine !== 'undefined' && audioEngine.playWin) audioEngine.playWin(); 
 
-    // ==========================================
-    // WIRING: VALIDATE LEVEL MISSIONS METRICS
-    // ==========================================
-    if (activeLevelTimeElapsed <= 120) {
-        let speedMission = dailyMissions.find(m => m.id === 'speedRun');
-        if (speedMission && speedMission.progress < speedMission.target) {
-            speedMission.progress = 1;
-        }
-    }
-    if (!usedPowerupOnActiveLevel) {
-        let pureMission = dailyMissions.find(m => m.id === 'noPowerups');
-        if (pureMission && pureMission.progress < pureMission.target) {
-            pureMission.progress = 1;
-        }
-    }
-    let m10 = dailyMissions.find(m => m.id === 'complete10');
-    if(m10 && m10.progress < m10.target) m10.progress++;
-    let m20 = dailyMissions.find(m => m.id === 'complete20');
-    if(m20 && m20.progress < m20.target) m20.progress++;
-    let m50 = dailyMissions.find(m => m.id === 'complete50');
-    if(m50 && m50.progress < m50.target) m50.progress++;
+   // Speed Run Check (Under 2 mins / 120 secs)
+if (activeLevelTimeElapsed <= 120) {
+    let speedMission = dailyMissions.find(m => m.id === 'speedRun');
+    if (speedMission && speedMission.progress < speedMission.target) speedMission.progress = 1;
+}
+
+// Pure Run Check (No hints/wands used)
+if (!usedPowerupOnActiveLevel) {
+    let pureMission = dailyMissions.find(m => m.id === 'noPowerups');
+    if (pureMission && pureMission.progress < pureMission.target) pureMission.progress = 1;
+}
+    // Milestone Counters
+let m10 = dailyMissions.find(m => m.id === 'complete10');
+if(m10 && m10.progress < m10.target) m10.progress++;
+
+let m20 = dailyMissions.find(m => m.id === 'complete20');
+if(m20 && m20.progress < m20.target) m20.progress++;
+
+let m50 = dailyMissions.find(m => m.id === 'complete50');
+if(m50 && m50.progress < m50.target) m50.progress++;
 
     if (isDailyMissionActive) saveGameDaily(); else saveGame();
 
@@ -1446,23 +1442,85 @@ function closeTutorialModal() {
 function openSoundSettingsModal() {
     if (typeof audioEngine !== 'undefined' && audioEngine.playClick) audioEngine.playClick();
     
-    const stateText = (typeof audioEngine !== 'undefined' && audioEngine.sfxEnabled) ? "ON" : "OFF";
-    const btnColor = (typeof audioEngine !== 'undefined' && audioEngine.sfxEnabled) ? "#ff416c" : "#2ecc71";
-    const btnText = (typeof audioEngine !== 'undefined' && audioEngine.sfxEnabled) ? "Mute All Sounds" : "Turn Sounds ON";
+    // Check states safely from your engine
+    const sfxOn = (typeof audioEngine !== 'undefined') ? audioEngine.sfxEnabled : true;
+    const musicOn = (typeof audioEngine !== 'undefined') ? audioEngine.musicEnabled : true;
+    
+    // Grab current volumes if available, otherwise default to 80%
+    const sfxVol = (typeof audioEngine !== 'undefined' && audioEngine.getSfxVolume) ? audioEngine.getSfxVolume() * 100 : 80;
+    const musicVol = (typeof audioEngine !== 'undefined' && audioEngine.getMusicVolume) ? audioEngine.getMusicVolume() * 100 : 60;
 
     const contentHTML = `
-        <div style="font-size: 16px; margin-bottom: 20px;">
-            Premium Sound FX: <strong id="sound-state-text" style="color: var(--theme-text);">${stateText}</strong>
+        <div class="premium-settings-container">
+            
+            <div class="settings-control-card">
+                <div class="settings-meta-row">
+                    <div class="settings-label-group">
+                        <span class="settings-title-text">Sound Effects</span>
+                        <span class="settings-sub-text" id="sfx-vol-label">${sfxVol}%</span>
+                    </div>
+                    <button class="ui-toggle-btn-3d ${sfxOn ? 'toggle-on' : 'toggle-off'}" id="sfx-toggle" onclick="handleSettingToggle('sfx')">
+                        <span class="toggle-3d-face">${sfxOn ? 'ON' : 'OFF'}</span>
+                    </button>
+                </div>
+                <div class="slider-vault">
+                    <input type="range" min="0" max="100" value="${sfxVol}" class="premium-range-slider" id="sfx-slider" oninput="handleVolumeSlider('sfx', this.value)">
+                </div>
+            </div>
+
+            <div class="settings-control-card">
+                <div class="settings-meta-row">
+                    <div class="settings-label-group">
+                        <span class="settings-title-text">Ambient Music</span>
+                        <span class="settings-sub-text" id="music-vol-label">${musicVol}%</span>
+                    </div>
+                    <button class="ui-toggle-btn-3d ${musicOn ? 'toggle-on' : 'toggle-off'}" id="music-toggle" onclick="handleSettingToggle('music')">
+                        <span class="toggle-3d-face">${musicOn ? 'ON' : 'OFF'}</span>
+                    </button>
+                </div>
+                <div class="slider-vault">
+                    <input type="range" min="0" max="100" value="${musicVol}" class="premium-range-slider" id="music-slider" oninput="handleVolumeSlider('music', this.value)">
+                </div>
+            </div>
+
         </div>
-        <button onclick="toggleAudioState()" style="
-            width: 100%; padding: 16px; border-radius: 14px; 
-            border: none; background: ${btnColor}; color: white; 
-            font-weight: 800; font-size: 16px; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: background 0.3s;
-        " id="sound-toggle-btn">${btnText}</button>
     `;
     
     openOmniModal('Audio Settings', contentHTML);
+}
+
+// Global UI update handlers to tie directly into your audio controller
+function handleSettingToggle(type) {
+    if (typeof audioEngine === 'undefined') return;
+    if (audioEngine.playClick) audioEngine.playClick();
+    
+    const btn = document.getElementById(`${type}-toggle`);
+    const face = btn.querySelector('.toggle-3d-face');
+    
+    if (type === 'sfx') {
+        audioEngine.sfxEnabled = !audioEngine.sfxEnabled;
+        const state = audioEngine.sfxEnabled;
+        btn.className = `ui-toggle-btn-3d ${state ? 'toggle-on' : 'toggle-off'}`;
+        face.textContent = state ? 'ON' : 'OFF';
+    } else {
+        audioEngine.musicEnabled = !audioEngine.musicEnabled;
+        const state = audioEngine.musicEnabled;
+        btn.className = `ui-toggle-btn-3d ${state ? 'toggle-on' : 'toggle-off'}`;
+        face.textContent = state ? 'ON' : 'OFF';
+        if (audioEngine.updateMusicPlayback) audioEngine.updateMusicPlayback(); 
+    }
+}
+
+function handleVolumeSlider(type, val) {
+    document.getElementById(`${type}-vol-label`).textContent = `${val}%`;
+    if (typeof audioEngine === 'undefined') return;
+    
+    const normVol = val / 100;
+    if (type === 'sfx' && audioEngine.setSfxVolume) {
+        audioEngine.setSfxVolume(normVol);
+    } else if (type === 'music' && audioEngine.setMusicVolume) {
+        audioEngine.setMusicVolume(normVol);
+    }
 }
 
 function toggleAudioState() {
@@ -1933,63 +1991,90 @@ function openDynamicStatsModal() {
 }
 
 function openDailyMissionsModal() {
-    // 2. Prepare words and parameters
     if (typeof audioEngine !== 'undefined') {
-        if (audioEngine.init) audioEngine.init(); // This wakes up the audio engine
+        if (audioEngine.init) audioEngine.init();
         if (audioEngine.playClick) audioEngine.playClick();
     }
     
-    let htmlContainerStr = `<div class="premium-mission-container">`;
+    let htmlContainerStr = `<div class="mission-ui-container">`;
     
     dailyMissions.forEach(m => {
         const progressRatio = Math.min((m.progress / m.target) * 100, 100);
         const isComplete = m.progress >= m.target;
         
-        let progressLabel = `${m.progress} / ${m.target}`;
+        // Format the progress text
+        let progressLabel = `${m.progress}/${m.target}`;
         if(m.id === 'internetTime') {
             const minsCurrent = Math.floor(m.progress / 60);
             const minsTarget = Math.floor(m.target / 60);
-            progressLabel = minsCurrent >= 1 ? `${minsCurrent}m / ${minsTarget}m` : `${m.progress}s / ${m.target}s`;
+            progressLabel = minsCurrent >= 1 ? `${minsCurrent}m/${minsTarget}m` : `${m.progress}s/${m.target}s`;
         }
 
-        let buttonTextStr = m.claimed ? "Claimed" : "Claim Reward";
+        // Determine Button State
+        let buttonTextStr = m.claimed ? "Claimed" : "Claim";
         let buttonAttributes = (isComplete && !m.claimed) ? "" : "disabled";
+        
+        let btnClass = "btn-locked"; 
+        if (isComplete && !m.claimed) btnClass = "btn-ready";
+        if (m.claimed) btnClass = "btn-claimed";
 
         htmlContainerStr += `
-            <div class="premium-mission-card">
-                <div class="mission-meta-row">
-                    <span class="mission-title-text">${m.text}</span>
-                    <span class="mission-reward-pill">🪙 ${m.reward}</span>
+            <div class="mission-ui-card">
+                
+                <div class="mission-center-col">
+                    <div class="mission-ui-title">${m.text}</div>
+                    <div class="mission-ui-track">
+                        <div class="mission-ui-fill" style="width: ${progressRatio}%;"></div>
+                        <div class="mission-ui-progress-text">${progressLabel}</div>
+                    </div>
                 </div>
-                <div class="mission-rail">
-                    <div class="mission-fluid" style="width: ${progressRatio}%;"></div>
-                </div>
-                <div class="mission-action-row">
-                    <span>Progress: ${progressLabel}</span>
-                    <button class="btn-claim-mission" ${buttonAttributes} onclick="claimMissionReward('${m.id}', this)">${buttonTextStr}</button>
-                </div>
+                
+              <div class="mission-right-col">
+    <div class="mission-reward-vault">
+        <div class="reward-vault-inner">
+            <img src="./images/gold.png" alt="Coin" class="ui-coin-icon 3d-pop" />
+            <span class="ui-reward-text">+${m.reward}</span>
+        </div>
+    </div>
+    
+    <button class="ui-mission-btn-3d ${btnClass}" ${buttonAttributes} onclick="claimMissionReward('${m.id}', this)">
+        <span class="btn-3d-text">${buttonTextStr}</span>
+    </button>
+</div>
+                
             </div>
         `;
     });
 
     htmlContainerStr += `</div>`;
-    openOmniModal("🎯 Daily Missions", htmlContainerStr);
+    openOmniModal("Daily Missions", htmlContainerStr);
 }
 
 function claimMissionReward(missionId, elementButtonRef) {
     let activeTargetMission = dailyMissions.find(m => m.id === missionId);
+    
+    // Double check that it's actually complete and hasn't been double-claimed
     if (activeTargetMission && activeTargetMission.progress >= activeTargetMission.target && !activeTargetMission.claimed) {
+        
+        // 1. Mark as claimed
         activeTargetMission.claimed = true;
+        
+        // 2. Grant the specific reward amount from the array
         coins += activeTargetMission.reward;
+        
+        // 3. Update the UI and Save Data
         updateEconomyUI();
         if (isDailyMissionActive) saveGameDaily(); else saveGame();
         
+        // 4. Lock the button so it can't be spammed
         elementButtonRef.textContent = "Claimed";
         elementButtonRef.disabled = true;
         
+        // 5. Trigger sound and visual coin fountain
         if (typeof audioEngine !== 'undefined' && audioEngine.playClick) audioEngine.playClick();
         spawnFloatingCoins(elementButtonRef.parentElement, 15);
         
+        // 6. Refresh the modal to update progress bars
         setTimeout(() => {
             openDailyMissionsModal();
         }, 600);
