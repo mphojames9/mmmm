@@ -1179,7 +1179,7 @@
                 <img src="./images/HomeIcons/challenge.png" alt="Challenge" class="icon-img">
             </div>
 
-            <div class="omni-btn-feature" onclick="openOmniModal('Leaderboard', '🏆 1st: Guest_8492 (9400 pts)<br>🥈 2nd: WordKing (8100 pts)<br>🥉 3rd: You (7500 pts)')">
+            <div class="omni-btn-feature" onclick="openGoogleLeaderboardModal()">
                 <img src="./images/HomeIcons/ranks.png" alt="Ranks" class="icon-img">
             </div>
 
@@ -1191,9 +1191,9 @@
                 <img src="./images/HomeIcons/stars.png" alt="Stars" class="icon-img">
             </div>
 
-            <div class="omni-btn-feature" onclick="openOmniModal('More Games', '🎮 Craving more puzzles?<br><br>Check out our Sudoku and Crossword premium apps!')">
-                <img src="./images/HomeIcons/more.png" alt="More" class="icon-img">
-            </div>
+            <div class="omni-btn-feature" onclick="openMoreGamesModal()">
+    <img src="./images/HomeIcons/more.png" alt="More" class="icon-img">
+</div>
         </div>
     </div>
 </div>
@@ -1290,5 +1290,270 @@
 
 <script src="sounds.js"></script>
 <script src="app.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAWH0CyCunN0MQBi-5wLjeFndmZq_uvsnk",
+  authDomain: "leader-board-44583.firebaseapp.com",
+  projectId: "leader-board-44583",
+  storageBucket: "leader-board-44583.firebasestorage.app",
+  messagingSenderId: "702303612974",
+  appId: "1:702303612974:web:4dfbad0016aa4980a5efbf",
+  measurementId: "G-5L499YYLJY"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.currentUser = null;
+
+// 1. LOGIN FUNCTION
+window.googleLogin = async function () {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    window.currentUser = result.user;
+    console.log("Logged in:", window.currentUser.displayName);
+    
+    // Automatically save their current score upon logging in
+    if (typeof window.savePlayerScore === 'function') {
+      window.savePlayerScore();
+    }
+    
+    // Refresh the leaderboard modal to show them logged in
+    window.openGoogleLeaderboardModal();
+  } catch (err) {
+    console.error("Login failed:", err);
+  }
+};
+
+// 2. LOGOUT FUNCTION
+window.googleLogout = async function () {
+  await signOut(auth);
+  window.currentUser = null;
+  window.openGoogleLeaderboardModal();
+};
+
+// 3. SAVE REAL STATS TO FIRESTORE
+window.savePlayerScore = async function () {
+  if (!window.currentUser) return; // Silent return if not logged in yet
+  
+  try {
+    // Grabs the live score and words found from your app.js global variables
+    const currentScore = typeof score !== 'undefined' ? score : 0;
+    const totalWords = (typeof gameStats !== 'undefined' && gameStats.totalWordsFound) ? gameStats.totalWordsFound : 0;
+
+    const playerRef = doc(db, "leaderboard", window.currentUser.uid);
+    await setDoc(playerRef, {
+      name: window.currentUser.displayName,
+      photo: window.currentUser.photoURL || '',
+      score: currentScore,
+      wordsFound: totalWords,
+      lastUpdated: Date.now()
+    }, { merge: true });
+    
+    console.log("🏆 Score synced to Google Cloud:", currentScore);
+  } catch (err) {
+    console.error("Error syncing score:", err);
+  }
+};
+
+// 4. FETCH STATS & RENDER LEADERBOARD MODAL
+window.openGoogleLeaderboardModal = async function () {
+  if (typeof audioEngine !== 'undefined' && audioEngine.playClick) audioEngine.playClick();
+
+openOmniModal(
+  // 1. Premium Title with Custom Image
+  `<div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; letter-spacing: 0.5px;">
+    <img src="./images/cup.png" alt="Cup" style="width: 28px; height: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));" />
+    Global Cloud Leaderboard
+   </div>`,
+  
+  // 2. Ultra-Modern Orbital Loading State
+  `
+  <style>
+    @keyframes orbital-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes core-pulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+      50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px rgba(236, 72, 153, 0.6); }
+    }
+    .premium-spinner {
+      position: relative;
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 28px auto;
+    }
+    /* The outer orbiting gradient ring */
+    .premium-spinner-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent, transparent 30%, #4f46e5 80%, #ec4899 100%);
+      animation: orbital-spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      mask-image: radial-gradient(transparent 58%, black 60%);
+      -webkit-mask-image: radial-gradient(transparent 58%, black 60%);
+    }
+    /* The inner pulsing core */
+    .premium-spinner-core {
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #ec4899);
+      animation: core-pulse 2s ease-in-out infinite;
+    }
+    .premium-text {
+      font-weight: 700;
+      font-size: 1.15rem;
+      background: linear-gradient(90deg, #a5b4fc, #f9a8d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
+    }
+  </style>
+
+  <div style="text-align: center; padding: 60px 20px; font-family: system-ui, -apple-system, sans-serif;">
+    <div class="premium-spinner">
+      <div class="premium-spinner-ring"></div>
+      <div class="premium-spinner-core"></div>
+    </div>
+    <p class="premium-text">Synchronizing Real-Time Standings...</p>
+  </div>
+  `
+);
+
+  try {
+    const scoresRef = collection(db, "leaderboard");
+    const q = query(scoresRef, orderBy("score", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
+
+    let html = `
+      <div class="premium-dashboard-wrapper" style="padding-top: 10px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div class="premium-section-header" style="margin: 0;">Top 10 Seekers</div>
+          ${window.currentUser 
+            ? `<button onclick="googleLogout()" style="background: rgba(255,65,108,0.2); border: 1px solid #ff416c; color: #ff416c; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer;">Sign Out (${window.currentUser.displayName.split(' ')[0]})</button>` 
+            : `<button onclick="googleLogin()" style="background: linear-gradient(135deg, #4facfe, #00f2fe); border: none; color: white; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(79,172,254,0.4);">🚀 Sign in with Google to Rank</button>`
+          }
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 4px;">
+    `;
+
+    if (querySnapshot.empty) {
+      html += `<p style="text-align: center; color: #a0aec0; padding: 20px;">No scores recorded yet. Be the first!</p>`;
+    } else {
+      let rank = 1;
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const isMe = window.currentUser && docSnap.id === window.currentUser.uid;
+        
+        // Highlight active user row
+        const rowStyle = isMe 
+          ? "border: 1px solid var(--gold, #f4c053); background: rgba(244, 192, 83, 0.15); box-shadow: 0 0 10px rgba(244, 192, 83, 0.1);" 
+          : "background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);";
+        
+        let medal = `<span style="color: #a0aec0; font-weight: 800;">#${rank}</span>`;
+        if (rank === 1) medal = "🥇";
+        else if (rank === 2) medal = "🥈";
+        else if (rank === 3) medal = "🥉";
+
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; ${rowStyle}">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="font-size: 16px; width: 24px; text-align: center;">${medal}</div>
+              <div>
+                <div style="font-weight: 800; color: #ffffff; font-size: 13px;">
+                  ${data.name || 'Anonymous Seeker'} ${isMe ? '<span style="color: var(--gold, #f4c053); font-size: 10px;">(You)</span>' : ''}
+                </div>
+                <div style="color: #7a9c9f; font-size: 11px; font-weight: 600;">
+                  Words Found: ${data.wordsFound ? data.wordsFound.toLocaleString() : 0}
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-weight: 900; font-size: 15px; color: #2ecc71;">
+                ${data.score ? data.score.toLocaleString() : 0}
+              </span>
+              <small style="font-size: 9px; color: #a0aec0; display: block; text-transform: uppercase;">PTS</small>
+            </div>
+          </div>
+        `;
+        rank++;
+      });
+    }
+
+    html += `
+        </div>
+        <div class="premium-dashboard-footer" style="margin-top: 14px;">
+          <span class="footer-pulse">●</span> Live Google Cloud Firestore Sync
+        </div>
+      </div>
+    `;
+
+    document.getElementById('omni-modal-body').innerHTML = html;
+
+  } catch (err) {
+    console.error("Failed to fetch leaderboard:", err);
+    document.getElementById('omni-modal-body').innerHTML = `
+      <div style="text-align: center; padding: 30px; color: #ff416c;">
+        <p style="font-weight: 700; margin-bottom: 10px;">Connection Interrupted</p>
+        <p style="font-size: 13px; color: #ccc;">Could not reach Google Cloud servers. Please verify your internet connection or database security rules.</p>
+      </div>
+    `;
+  }
+};
+
+function generateLeaderboardRow(user) {
+  // Check if the user has a Google image; if not, generate a premium initials avatar
+  const avatarUrl = user.googleProfileImage 
+    ? user.googleProfileImage 
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1e1e2f&color=a5b4fc&bold=true`;
+
+  return `
+    <div style="display: flex; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='translateX(4px)';" onmouseout="this.style.background='transparent'; this.style.transform='translateX(0)';">
+      
+      <!-- Rank Number -->
+      <div style="width: 30px; font-weight: 800; color: #64748b; font-size: 0.9rem;">
+        #${user.rank}
+      </div>
+
+      <!-- Avatar with glowing border -->
+      <img src="${avatarUrl}" alt="${user.name}" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #4f46e5; margin-right: 16px; object-fit: cover; box-shadow: 0 0 10px rgba(79, 70, 229, 0.2);" />
+      
+      <!-- User Info -->
+      <div style="flex-grow: 1; text-align: left;">
+        <div style="font-weight: 600; color: #f1f5f9; font-size: 1.05rem;">${user.name}</div>
+      </div>
+      
+      <!-- Score -->
+      <div style="font-weight: 800; color: #ec4899; font-size: 1.1rem;">
+        ${user.score.toLocaleString()} <span style="font-size: 0.8rem; color: #94a3b8;">PTS</span>
+      </div>
+    </div>
+  `;
+}
+</script>
 </body>
 </html>

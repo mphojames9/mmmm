@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Mastermind Edition</title>
+    <style>
+        :root {
+            /* Theme Classic Default Variables */
+            --bg-main: #faf8ef;
+            --bg-container: #bbada0;
+            --bg-cell: rgba(238, 228, 218, 0.35);
+            --text-dark: #776e65;
+            --text-light: #f9f6f2;
+            --primary: #8f7a66;
+            --accent: #e95940;
+            --gold: #f2b134;
+            --grid-gap: 5px;
+            --tile-radius: 6px;
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+
+            /* Tile Classic Colors */
+            --tile-2: #eee4da;
+            --tile-4: #ede0c8;
+            --tile-8: #f2b179;
+            --tile-16: #f59563;
+            --tile-32: #f67c5f;
+            --tile-64: #f65e3b;
+            --tile-128: #edcf72;
+            --tile-256: #edcc61;
+            --tile-512: #9c0;
+            --tile-1024: #33b5e5;
+            --tile-2048: #aa66cc;
+            --tile-super: #ff33b5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* HUD Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand h1 {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 0.9;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        .brand span {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        .hud-scores {
+            display: flex;
+            gap: 8px;
+        }
+
+        .hud-card {
+            background-color: var(--bg-container);
+            padding: 6px 14px;
+            border-radius: 6px; /* Locked UI radius */
+            text-align: center;
+            min-width: 75px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .hud-card-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--text-light);
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        .hud-card-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        /* Toolbar controls */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .config-select-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        select {
+            background-color: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dark);
+            padding: 6px 12px;
+            border-radius: 6px; /* Locked UI radius */
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+
+        select:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--text-light);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px; /* Locked UI radius */
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Power-ups Zone */
+        .powerups-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: var(--glass-bg);
+            padding: 8px;
+            border-radius: 6px; /* Locked UI radius */
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .powerup-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px; /* Locked UI radius */
+            padding: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+        }
+
+        .powerup-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .powerup-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .powerup-btn.active {
+            border-color: var(--accent);
+            background: rgba(233, 89, 64, 0.15);
+            animation: pulse-accent 1.5s infinite;
+        }
+
+        @keyframes pulse-accent {
+            0%, 100% { box-shadow: 0 0 4px var(--accent); }
+            50% { box-shadow: 0 0 12px var(--accent); }
+        }
+
+        .powerup-title {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .powerup-cost {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        /* Active Powerup Instructions Banner */
+        .action-banner {
+            background-color: var(--accent);
+            color: var(--text-light);
+            text-align: center;
+            padding: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 6px;
+            display: none;
+            animation: slide-down 0.25s ease-out;
+        }
+
+        @keyframes slide-down {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Play Grid Area */
+        .game-grid-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+        }
+
+        .grid-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-container);
+            border-radius: 8px;
+            padding: var(--grid-gap);
+            display: grid;
+            gap: var(--grid-gap);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            z-index: 1;
+        }
+
+        .grid-cell {
+            background-color: var(--bg-cell);
+            border-radius: var(--tile-radius); /* Dynamic grid cell radius */
+            width: 100%;
+            height: 100%;
+        }
+
+        .tile-container {
+            position: absolute;
+            width: calc(100% - (var(--grid-gap) * 2));
+            height: calc(100% - (var(--grid-gap) * 2));
+            margin: var(--grid-gap);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .tile {
+            position: absolute;
+            width: calc((100% - (var(--grid-gap) * (var(--grid-size) - 1))) / var(--grid-size));
+            height: calc((100% - (var(--grid-gap) * (var(--grid-size) - 1))) / var(--grid-size));
+            border-radius: var(--tile-radius); /* Dynamic tile radius */
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 100ms ease-in-out, background-color 150ms ease;
+            transform: translate(
+                calc(var(--col) * (100% + var(--grid-gap))),
+                calc(var(--row) * (100% + var(--grid-gap)))
+            );
+            pointer-events: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+
+        .tile.clickable {
+            cursor: pointer;
+        }
+        .tile.clickable:hover {
+            box-shadow: 0 0 15px var(--accent);
+            transform: translate(
+                calc(var(--col) * (100% + var(--grid-gap))),
+                calc(var(--row) * (100% + var(--grid-gap)))
+            ) scale(1.05);
+        }
+
+        /* Micro-interactions: Spawn & Merge Pops */
+        .tile.spawn {
+            animation: tile-spawn 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .tile.merge {
+            animation: tile-merge 220ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 5;
+        }
+
+        @keyframes tile-spawn {
+            0% { transform: translate(calc(var(--col) * (100% + var(--grid-gap))), calc(var(--row) * (100% + var(--grid-gap)))) scale(0); opacity: 0; }
+            100% { transform: translate(calc(var(--col) * (100% + var(--grid-gap))), calc(var(--row) * (100% + var(--grid-gap)))) scale(1); opacity: 1; }
+        }
+
+        @keyframes tile-merge {
+            0% { transform: translate(calc(var(--col) * (100% + var(--grid-gap))), calc(var(--row) * (100% + var(--grid-gap)))) scale(0.85); }
+            50% { transform: translate(calc(var(--col) * (100% + var(--grid-gap))), calc(var(--row) * (100% + var(--grid-gap)))) scale(1.15); }
+            100% { transform: translate(calc(var(--col) * (100% + var(--grid-gap))), calc(var(--row) * (100% + var(--grid-gap)))) scale(1); }
+        }
+
+        /* Tile Values Stylings dynamically populated via values */
+        .tile[data-value="2"] { background-color: var(--tile-2); color: var(--text-dark); font-size: calc(36px - (var(--grid-size) * 3px)); }
+        .tile[data-value="4"] { background-color: var(--tile-4); color: var(--text-dark); font-size: calc(36px - (var(--grid-size) * 3px)); }
+        .tile[data-value="8"] { background-color: var(--tile-8); color: var(--text-light); font-size: calc(36px - (var(--grid-size) * 3px)); }
+        .tile[data-value="16"] { background-color: var(--tile-16); color: var(--text-light); font-size: calc(34px - (var(--grid-size) * 3px)); }
+        .tile[data-value="32"] { background-color: var(--tile-32); color: var(--text-light); font-size: calc(34px - (var(--grid-size) * 3px)); }
+        .tile[data-value="64"] { background-color: var(--tile-64); color: var(--text-light); font-size: calc(34px - (var(--grid-size) * 3px)); }
+        .tile[data-value="128"] { background-color: var(--tile-128); color: var(--text-light); font-size: calc(30px - (var(--grid-size) * 3px)); box-shadow: 0 0 10px rgba(242, 177, 52, 0.3); }
+        .tile[data-value="256"] { background-color: var(--tile-256); color: var(--text-light); font-size: calc(30px - (var(--grid-size) * 3px)); box-shadow: 0 0 14px rgba(242, 177, 52, 0.4); }
+        .tile[data-value="512"] { background-color: var(--tile-512); color: var(--text-light); font-size: calc(30px - (var(--grid-size) * 3px)); }
+        .tile[data-value="1024"] { background-color: var(--tile-1024); color: var(--text-light); font-size: calc(26px - (var(--grid-size) * 3px)); }
+        .tile[data-value="2048"] { background-color: var(--tile-2048); color: var(--text-light); font-size: calc(26px - (var(--grid-size) * 3px)); box-shadow: 0 0 20px rgba(170, 102, 204, 0.6); }
+        .tile[data-value="4096"], .tile[data-value="8192"], .tile[data-value="16384"] { background-color: var(--tile-super); color: var(--text-light); font-size: calc(22px - (var(--grid-size) * 3px)); }
+
+        /* Dialog Overlays */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .overlay h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .overlay p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        /* Confetti canvas over the top */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="app-container">
+    <header>
+        <div class="brand">
+            <h1>2048</h1>
+            <span>Mastermind</span>
+        </div>
+        <div class="hud-scores">
+            <div class="hud-card">
+                <div class="hud-card-label">Score</div>
+                <div class="hud-card-value" id="score-val">0</div>
+            </div>
+            <div class="hud-card">
+                <div class="hud-card-label">Best</div>
+                <div class="hud-card-value" id="best-val">0</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="toolbar">
+        <div class="config-select-group">
+            <select id="grid-size-select" title="Change Grid Size">
+                <option value="3">3x3 Grid</option>
+                <option value="4" selected>4x4 Grid</option>
+                <option value="5">5x5 Grid</option>
+                <option value="6">6x6 Grid</option>
+                <option value="8">8x8 Grid</option>
+            </select>
+        </div>
+        <button class="btn" id="new-game-btn">New Game</button>
+    </div>
+
+    <div class="powerups-container">
+        <button class="powerup-btn" id="powerup-undo" title="Rollback board state">
+            <span class="powerup-title">↩️ Undo</span>
+            <span class="powerup-cost" id="cost-undo">1 Left</span>
+        </button>
+        <button class="powerup-btn" id="powerup-shuffle" title="Scramble existing tiles safely">
+            <span class="powerup-title">🔀 Shuffle</span>
+            <span class="powerup-cost" id="cost-shuffle">1 Left</span>
+        </button>
+        <button class="powerup-btn" id="powerup-delete" title="Target and blow up a weak tile">
+            <span class="powerup-title">💣 Demolish</span>
+            <span class="powerup-cost" id="cost-delete">1 Left</span>
+        </button>
+    </div>
+
+    <div class="action-banner" id="action-banner-el">
+        Click on any tile to demolish it and free up the space!
+    </div>
+
+    <div class="game-grid-wrapper">
+        <div class="grid-container" id="grid-bg"></div>
+        <div class="tile-container" id="tile-layer"></div>
+
+        <div class="overlay" id="win-overlay">
+            <h2>You Made It!</h2>
+            <p>You created a 2048 tile!</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" id="continue-win-btn">Keep Going</button>
+                <button class="btn" id="restart-win-btn">New Game</button>
+            </div>
+        </div>
+
+        <div class="overlay" id="gameover-overlay">
+            <h2>Game Over</h2>
+            <p>No moves remaining on this grid.</p>
+            <button class="btn" id="restart-fail-btn">Try Again</button>
+        </div>
+
+        <div class="overlay" id="ad-overlay">
+            <h2>📺 Ad Break</h2>
+            <p>Watching a sponsored message to earn a power-up...</p>
+            <div id="ad-timer" style="font-size: 28px; font-weight: bold; color: var(--gold); margin: 10px 0;">3s</div>
+            <button class="btn" id="close-ad-btn" disabled>Please Wait...</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // State Tracking variables
+    let gridDimension = 4;
+    let board = []; 
+    let tilesArray = []; 
+    let score = 0;
+    let highscore = 0;
+    let moveCounter = 0;
+    let mergeCount = 0;
+    let shuffleCount = 0;
+    let highestTileAchieved = 2;
+    let isGameWon = false;
+    let keepPlayingAfterWin = false;
+    let stateHistoryStack = []; 
+
+    // Power-up Inventory: Grant 1 of each per game
+    let powerups = {
+        undo: 1,
+        shuffle: 1,
+        delete: 1
+    };
+
+    // Powerup Active Modes
+    let isDeletePowerupActive = false;
+
+    // Class representation for unique tile manipulation and CSS layout binding
+    class Tile {
+        static idCounter = 0;
+        constructor(row, col, val) {
+            this.row = row;
+            this.col = col;
+            this.value = val;
+            this.id = Tile.idCounter++;
+            this.mergedInto = null; 
+            this.domElement = null;
+            this.isNew = true;
+            this.isMerged = false;
+        }
+
+        saveToCoordinates(row, col) {
+            this.row = row;
+            this.col = col;
+        }
+    }
+
+    // Initialize Page Elements
+    const gridBg = document.getElementById('grid-bg');
+    const tileLayer = document.getElementById('tile-layer');
+    const scoreVal = document.getElementById('score-val');
+    const bestVal = document.getElementById('best-val');
+    const gridSizeSelect = document.getElementById('grid-size-select');
+    const newGameBtn = document.getElementById('new-game-btn');
+    const actionBanner = document.getElementById('action-banner-el');
+
+    // Overlays
+    const winOverlay = document.getElementById('win-overlay');
+    const gameoverOverlay = document.getElementById('gameover-overlay');
+    const adOverlay = document.getElementById('ad-overlay');
+    const adTimerEl = document.getElementById('ad-timer');
+    const closeAdBtn = document.getElementById('close-ad-btn');
+
+    // Powerups
+    const undoBtn = document.getElementById('powerup-undo');
+    const shuffleBtn = document.getElementById('powerup-shuffle');
+    const deleteBtn = document.getElementById('powerup-delete');
+    const costUndo = document.getElementById('cost-undo');
+    const costShuffle = document.getElementById('cost-shuffle');
+    const costDelete = document.getElementById('cost-delete');
+
+    // Startup Execution Setup
+    window.addEventListener('DOMContentLoaded', () => {
+        loadSavedData();
+        setupVisualGridBackground();
+        if (board.length === 0 || tilesArray.length === 0) {
+            startFreshGame();
+        } else {
+            synchronizeTileDOM();
+        }
+    });
+
+    // Generate non-interactive cells representing layout voids
+    function setupVisualGridBackground() {
+        gridBg.innerHTML = '';
+        document.documentElement.style.setProperty('--grid-size', gridDimension);
+        
+        // Dynamic scaling: reduce radius and gap on denser grids
+        let dynamicGap = 5;
+        let dynamicRadius = 6;
+
+        if (gridDimension === 5) {
+            dynamicRadius = 4;
+            dynamicGap = 5;
+        } else if (gridDimension === 6) {
+            dynamicRadius = 3;
+            dynamicGap = 4;
+        } else if (gridDimension >= 8) {
+            dynamicRadius = 2;
+            dynamicGap = 3;
+        }
+
+        document.documentElement.style.setProperty('--grid-gap', dynamicGap + 'px');
+        document.documentElement.style.setProperty('--tile-radius', dynamicRadius + 'px');
+
+        gridBg.style.gridTemplateColumns = `repeat(${gridDimension}, 1fr)`;
+        gridBg.style.gridTemplateRows = `repeat(${gridDimension}, 1fr)`;
+
+        for (let i = 0; i < gridDimension * gridDimension; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            gridBg.appendChild(cell);
+        }
+    }
+
+    // Launch matrix and wipe canvas
+    function startFreshGame() {
+        board = Array(gridDimension).fill(null).map(() => Array(gridDimension).fill(null));
+        tilesArray = [];
+        tileLayer.innerHTML = '';
+        score = 0;
+        moveCounter = 0;
+        mergeCount = 0;
+        shuffleCount = 0;
+        highestTileAchieved = 2;
+        isGameWon = false;
+        keepPlayingAfterWin = false;
+        isDeletePowerupActive = false;
+        stateHistoryStack = [];
+
+        // Reset inventory to 1 free use per game
+        powerups = { undo: 1, shuffle: 1, delete: 1 };
+
+        hideAllOverlays();
+        spawnTile();
+        spawnTile();
+        synchronizeTileDOM();
+        saveCurrentSession();
+    }
+
+    function findAvailableCells() {
+        const openCoordinates = [];
+        for (let r = 0; r < gridDimension; r++) {
+            for (let c = 0; c < gridDimension; c++) {
+                if (!board[r][c]) {
+                    openCoordinates.push({r, c});
+                }
+            }
+        }
+        return openCoordinates;
+    }
+
+    function spawnTile() {
+        const openSpaces = findAvailableCells();
+        if (openSpaces.length > 0) {
+            const choice = openSpaces[Math.floor(Math.random() * openSpaces.length)];
+            const chosenValue = Math.random() < 0.9 ? 2 : 4;
+            const spawnedTile = new Tile(choice.r, choice.c, chosenValue);
+            board[choice.r][choice.c] = spawnedTile;
+            tilesArray.push(spawnedTile);
+        }
+    }
+
+    function synchronizeTileDOM() {
+        const currentActiveDomIds = new Set();
+
+        tilesArray.forEach(tile => {
+            if (tile.mergedInto) return; 
+
+            currentActiveDomIds.add(tile.id);
+            let el = tile.domElement;
+
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'tile spawn';
+                el.id = `tile-node-${tile.id}`;
+                el.addEventListener('animationend', () => {
+                    el.classList.remove('spawn');
+                    el.classList.remove('merge');
+                });
+                tileLayer.appendChild(el);
+                tile.domElement = el;
+            }
+
+            el.style.setProperty('--row', tile.row);
+            el.style.setProperty('--col', tile.col);
+            el.textContent = tile.value;
+            el.setAttribute('data-value', tile.value);
+
+            if (tile.isMerged) {
+                el.classList.add('merge');
+                tile.isMerged = false; 
+            }
+
+            if (isDeletePowerupActive) {
+                el.classList.add('clickable');
+                el.onclick = () => demolishTargetTile(tile);
+            } else {
+                el.classList.remove('clickable');
+                el.onclick = null;
+            }
+        });
+
+        const allDomNodes = tileLayer.querySelectorAll('.tile');
+        allDomNodes.forEach(node => {
+            const nodeId = parseInt(node.id.replace('tile-node-', ''));
+            if (!currentActiveDomIds.has(nodeId)) {
+                const exactTile = tilesArray.find(t => t.id === nodeId);
+                if (exactTile && exactTile.mergedInto) {
+                    node.style.setProperty('--row', exactTile.mergedInto.row);
+                    node.style.setProperty('--col', exactTile.mergedInto.col);
+                    node.style.opacity = '0';
+                    setTimeout(() => node.remove(), 100);
+                } else {
+                    node.remove();
+                }
+            }
+        });
+
+        tilesArray.forEach(t => {
+            if (t.value > highestTileAchieved) {
+                highestTileAchieved = t.value;
+                if (highestTileAchieved === 2048 && !isGameWon) {
+                    triggerWinState();
+                }
+            }
+        });
+
+        updateDisplayHUD();
+    }
+
+    function recordStateToHistory() {
+        const boardSnapshot = board.map(row => {
+            return row.map(tile => tile ? { value: tile.value, row: tile.row, col: tile.col } : null);
+        });
+
+        stateHistoryStack.push({
+            board: boardSnapshot,
+            score: score,
+            moveCounter: moveCounter,
+            mergeCount: mergeCount,
+            shuffleCount: shuffleCount,
+            highestTileAchieved: highestTileAchieved
+        });
+
+        if (stateHistoryStack.length > 8) {
+            stateHistoryStack.shift();
+        }
+    }
+
+    function extractDirectionVector(inputKey) {
+        const vectorMaps = {
+            'ArrowUp': { r: -1, c: 0 },
+            'KeyW': { r: -1, c: 0 },
+            'ArrowDown': { r: 1, c: 0 },
+            'KeyS': { r: 1, c: 0 },
+            'ArrowLeft': { r: 0, c: -1 },
+            'KeyA': { r: 0, c: -1 },
+            'ArrowRight': { r: 0, c: 1 },
+            'KeyD': { r: 0, c: 1 }
+        };
+        return vectorMaps[inputKey] || null;
+    }
+
+    // Main structural slide calculations
+    function executeBoardSlide(vector) {
+        if (isDeletePowerupActive) return; 
+        if (isGameOverEvaluated()) return;
+
+        recordStateToHistory();
+
+        let isActionTaken = false;
+
+        const rowDirections = Array.from({length: gridDimension}, (_, i) => i);
+        const colDirections = Array.from({length: gridDimension}, (_, i) => i);
+
+        if (vector.r === 1) rowDirections.reverse();
+        if (vector.c === 1) colDirections.reverse();
+
+        tilesArray.forEach(t => t.mergedInto = null);
+
+        rowDirections.forEach(r => {
+            colDirections.forEach(c => {
+                const activeTile = board[r][c];
+                if (!activeTile) return;
+
+                let nextRow = r;
+                let nextCol = c;
+                let hasMerged = false; 
+
+                while (true) {
+                    const candidateRow = nextRow + vector.r;
+                    const candidateCol = nextCol + vector.c;
+
+                    if (candidateRow < 0 || candidateRow >= gridDimension || candidateCol < 0 || candidateCol >= gridDimension) {
+                        break;
+                    }
+
+                    const targetSpace = board[candidateRow][candidateCol];
+                    if (targetSpace) {
+                        if (targetSpace.value === activeTile.value && !targetSpace.mergedInto && !activeTile.mergedInto) {
+                            const updatedValue = activeTile.value * 2;
+                            activeTile.value = updatedValue;
+                            activeTile.isMerged = true;
+                            
+                            activeTile.saveToCoordinates(candidateRow, candidateCol);
+                            targetSpace.mergedInto = activeTile;
+                            
+                            board[r][c] = null;
+                            board[candidateRow][candidateCol] = activeTile;
+                            
+                            const indexToRemove = tilesArray.indexOf(targetSpace);
+                            if (indexToRemove > -1) tilesArray.splice(indexToRemove, 1);
+
+                            score += updatedValue;
+                            mergeCount++;
+               
+                            isActionTaken = true;
+                            hasMerged = true; 
+                        }
+                        break; 
+                    } else {
+                        nextRow = candidateRow;
+                        nextCol = candidateCol;
+                    }
+                }
+
+                if (!hasMerged && (nextRow !== r || nextCol !== c)) {
+                    board[r][c] = null;
+                    board[nextRow][nextCol] = activeTile;
+                    activeTile.saveToCoordinates(nextRow, nextCol);
+                    isActionTaken = true;
+                }
+            });
+        });
+
+        if (isActionTaken) {
+            moveCounter++;
+            spawnTile();
+            synchronizeTileDOM();
+            saveCurrentSession();
+
+            if (isGameOverEvaluated()) {
+                triggerGameOverState();
+            }
+        } else {
+            stateHistoryStack.pop();
+            updateDisplayHUD();
+        }
+    }
+
+    function isGameOverEvaluated() {
+        if (findAvailableCells().length > 0) return false;
+
+        for (let r = 0; r < gridDimension; r++) {
+            for (let c = 0; c < gridDimension; c++) {
+                const currentTile = board[r][c];
+                if (!currentTile) return false;
+
+                const adjacentCoordinates = [
+                    {r: r + 1, c: c},
+                    {r: r, c: c + 1}
+                ];
+
+                for (let i = 0; i < adjacentCoordinates.length; i++) {
+                    const adj = adjacentCoordinates[i];
+                    if (adj.r < gridDimension && adj.c < gridDimension) {
+                        const neighborTile = board[adj.r][adj.c];
+                        if (neighborTile && neighborTile.value === currentTile.value) {
+                            return false; 
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    function triggerWinState() {
+        isGameWon = true;
+        if (!keepPlayingAfterWin) {
+            winOverlay.classList.add('active');
+            triggerConfettiCelebration();
+        }
+    }
+
+    function triggerGameOverState() {
+        gameoverOverlay.classList.add('active');
+    }
+
+    function hideAllOverlays() {
+        winOverlay.classList.remove('active');
+        gameoverOverlay.classList.remove('active');
+        adOverlay.classList.remove('active');
+    }
+
+    // Updated HUD & Inventory Validation
+    function updateDisplayHUD() {
+        scoreVal.textContent = score;
+        if (score > highscore) {
+            highscore = score;
+            bestVal.textContent = highscore;
+            localStorage.setItem(`2048_high_${gridDimension}`, highscore);
+        }
+
+        // Update button texts based on available charges
+        costUndo.textContent = powerups.undo > 0 ? `${powerups.undo} Left` : '📺 Watch Ad (+1)';
+        costShuffle.textContent = powerups.shuffle > 0 ? `${powerups.shuffle} Left` : '📺 Watch Ad (+1)';
+        costDelete.textContent = powerups.delete > 0 ? `${powerups.delete} Left` : '📺 Watch Ad (+1)';
+
+        // Disable ONLY if action is physically impossible
+        undoBtn.disabled = stateHistoryStack.length === 0;
+        shuffleBtn.disabled = tilesArray.length < 3;
+        deleteBtn.disabled = tilesArray.length === 0;
+    }
+
+    // Ad Simulation Engine
+    function showAdModal(onSuccessCallback) {
+        adOverlay.classList.add('active');
+        let seconds = 3;
+        adTimerEl.textContent = `${seconds}s`;
+        closeAdBtn.disabled = true;
+        closeAdBtn.textContent = 'Please Wait...';
+
+        const timer = setInterval(() => {
+            seconds--;
+            if (seconds > 0) {
+                adTimerEl.textContent = `${seconds}s`;
+            } else {
+                clearInterval(timer);
+                adTimerEl.textContent = 'Reward Granted! 🎉';
+                closeAdBtn.disabled = false;
+                closeAdBtn.textContent = 'Claim Reward';
+                closeAdBtn.onclick = () => {
+                    adOverlay.classList.remove('active');
+                    if (onSuccessCallback) onSuccessCallback();
+                };
+            }
+        }, 1000);
+    }
+
+    // Refactored Power-ups with Ad-to-Accumulate Logic
+    function triggerTacticalUndo() {
+        if (stateHistoryStack.length === 0) return;
+
+        if (powerups.undo <= 0) {
+            showAdModal(() => {
+                powerups.undo++;
+                updateDisplayHUD();
+                saveCurrentSession();
+            });
+            return;
+        }
+
+        powerups.undo--;
+        const previousState = stateHistoryStack.pop();
+
+        score = previousState.score;
+        moveCounter = previousState.moveCounter;
+        mergeCount = previousState.mergeCount;
+        shuffleCount = previousState.shuffleCount;
+        highestTileAchieved = previousState.highestTileAchieved;
+
+        board = Array(gridDimension).fill(null).map(() => Array(gridDimension).fill(null));
+        tilesArray = [];
+        tileLayer.innerHTML = '';
+
+        previousState.board.forEach((row, r) => {
+            row.forEach((cellData, c) => {
+                if (cellData) {
+                    const tile = new Tile(r, c, cellData.value);
+                    tile.isNew = false;
+                    board[r][c] = tile;
+                    tilesArray.push(tile);
+                }
+            });
+        });
+
+        hideAllOverlays();
+        synchronizeTileDOM();
+        saveCurrentSession();
+    }
+
+    function triggerTacticalShuffle() {
+        if (tilesArray.length < 3) return;
+
+        if (powerups.shuffle <= 0) {
+            showAdModal(() => {
+                powerups.shuffle++;
+                updateDisplayHUD();
+                saveCurrentSession();
+            });
+            return;
+        }
+
+        powerups.shuffle--;
+        shuffleCount++;
+
+        const values = tilesArray.map(t => t.value);
+        for (let i = values.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [values[i], values[j]] = [values[j], values[i]];
+        }
+
+        tilesArray.forEach((tile, index) => {
+            tile.value = values[index];
+            tile.isMerged = true; 
+        });
+
+        synchronizeTileDOM();
+        saveCurrentSession();
+    }
+
+    function toggleDemolishMode() {
+        if (powerups.delete <= 0 && !isDeletePowerupActive) {
+            showAdModal(() => {
+                powerups.delete++;
+                updateDisplayHUD();
+                saveCurrentSession();
+            });
+            return;
+        }
+
+        isDeletePowerupActive = !isDeletePowerupActive;
+
+        if (isDeletePowerupActive) {
+            deleteBtn.classList.add('active');
+            actionBanner.style.display = 'block';
+        } else {
+            deleteBtn.classList.remove('active');
+            actionBanner.style.display = 'none';
+        }
+
+        synchronizeTileDOM();
+    }
+
+    function demolishTargetTile(targetTile) {
+        if (!isDeletePowerupActive || powerups.delete <= 0) return;
+
+        powerups.delete--;
+        isDeletePowerupActive = false;
+        deleteBtn.classList.remove('active');
+        actionBanner.style.display = 'none';
+
+        board[targetTile.row][targetTile.col] = null;
+        const index = tilesArray.indexOf(targetTile);
+        if (index > -1) tilesArray.splice(index, 1);
+
+        synchronizeTileDOM();
+        saveCurrentSession();
+    }
+
+    function updateGridDimensions(newSize) {
+        gridDimension = parseInt(newSize);
+        highscore = parseInt(localStorage.getItem(`2048_high_${gridDimension}`)) || 0;
+        bestVal.textContent = highscore;
+
+        setupVisualGridBackground();
+        startFreshGame();
+    }
+
+    function saveCurrentSession() {
+        const layoutSave = {
+            gridDimension,
+            score,
+            powerups,
+            moveCounter,
+            mergeCount,
+            shuffleCount,
+            highestTileAchieved,
+            isGameWon,
+            keepPlayingAfterWin,
+            board: board.map(row => row.map(cell => cell ? {value: cell.value, row: cell.row, col: cell.col} : null))
+        };
+        localStorage.setItem('2048_mastermind_session', JSON.stringify(layoutSave));
+    }
+
+    function loadSavedData() {
+        highscore = parseInt(localStorage.getItem(`2048_high_${gridDimension}`)) || 0;
+        bestVal.textContent = highscore;
+
+        const rawData = localStorage.getItem('2048_mastermind_session');
+        if (!rawData) return;
+
+        try {
+            const data = JSON.parse(rawData);
+            gridDimension = data.gridDimension || 4;
+            score = data.score || 0;
+            powerups = data.powerups || { undo: 1, shuffle: 1, delete: 1 };
+            moveCounter = data.moveCounter || 0;
+            mergeCount = data.mergeCount || 0;
+            shuffleCount = data.shuffleCount || 0;
+            highestTileAchieved = data.highestTileAchieved || 2;
+            isGameWon = data.isGameWon || false;
+            keepPlayingAfterWin = data.keepPlayingAfterWin || false;
+
+            gridSizeSelect.value = gridDimension;
+            setupVisualGridBackground();
+
+            board = Array(gridDimension).fill(null).map(() => Array(gridDimension).fill(null));
+            tilesArray = [];
+            tileLayer.innerHTML = '';
+
+            if (data.board) {
+                data.board.forEach((row, r) => {
+                    row.forEach((cell, c) => {
+                        if (cell) {
+                            const reconstructedTile = new Tile(r, c, cell.value);
+                            reconstructedTile.isNew = false;
+                            board[r][c] = reconstructedTile;
+                            tilesArray.push(reconstructedTile);
+                        }
+                    });
+                });
+            }
+        } catch (e) {
+            console.error("Session restoration error. Resetting to defaults.", e);
+            localStorage.removeItem('2048_mastermind_session');
+        }
+    }
+
+    window.addEventListener('keydown', (e) => {
+        const vector = extractDirectionVector(e.code);
+        if (vector) {
+            e.preventDefault();
+            executeBoardSlide(vector);
+        }
+    });
+
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+
+    window.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) return;
+        swipeStartX = e.touches[0].clientX;
+        swipeStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+        if (!swipeStartX || !swipeStartY) return;
+
+        const displacementX = e.changedTouches[0].clientX - swipeStartX;
+        const displacementY = e.changedTouches[0].clientY - swipeStartY;
+        const distanceSq = displacementX * displacementX + displacementY * displacementY;
+
+        if (distanceSq > 1000) {
+            let selectedVector = null;
+            if (Math.abs(displacementX) > Math.abs(displacementY)) {
+                selectedVector = displacementX > 0 ? { r: 0, c: 1 } : { r: 0, c: -1 };
+            } else {
+                selectedVector = displacementY > 0 ? { r: 1, c: 0 } : { r: -1, c: 0 };
+            }
+
+            if (selectedVector) {
+                executeBoardSlide(selectedVector);
+            }
+        }
+
+        swipeStartX = 0;
+        swipeStartY = 0;
+    }, { passive: true });
+
+    newGameBtn.addEventListener('click', startFreshGame);
+    gridSizeSelect.addEventListener('change', (e) => updateGridDimensions(e.target.value));
+
+    undoBtn.addEventListener('click', triggerTacticalUndo);
+    shuffleBtn.addEventListener('click', triggerTacticalShuffle);
+    deleteBtn.addEventListener('click', toggleDemolishMode);
+
+    document.getElementById('continue-win-btn').addEventListener('click', () => {
+        keepPlayingAfterWin = true;
+        winOverlay.classList.remove('active');
+        saveCurrentSession();
+    });
+    document.getElementById('restart-win-btn').addEventListener('click', startFreshGame);
+    document.getElementById('restart-fail-btn').addEventListener('click', startFreshGame);
+
+    // ==========================================
+    // CANVAS CELEBRATION CONFETTI SYSTEM ENGINE
+    // ==========================================
+    function triggerConfettiCelebration() {
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.style.display = 'block';
+
+        let canvasWidth = canvas.width = window.innerWidth;
+        let canvasHeight = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvasWidth = canvas.width = window.innerWidth;
+            canvasHeight = canvas.height = window.innerHeight;
+        });
+
+        const particles = [];
+        const colorPalette = ['#e95940', '#f2b134', '#aa66cc', '#33b5e5', '#ff33b5', '#99cc00'];
+
+        for (let i = 0; i < 150; i++) {
+            particles.push({
+                x: Math.random() * canvasWidth,
+                y: Math.random() * canvasHeight - canvasHeight,
+                radius: Math.random() * 4 + 3,
+                color: colorPalette[Math.floor(Math.random() * colorPalette.length)],
+                vx: (Math.random() - 0.5) * 8,
+                vy: Math.random() * 5 + 4,
+                rotationalVelocity: Math.random() * 0.2 - 0.1,
+                angle: Math.random() * Math.PI * 2
+            });
+        }
+
+        let animationFrameId;
+        function renderLoop() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            let particlesStillActive = false;
+            particles.forEach(p => {
+                p.y += p.vy;
+                p.x += p.vx;
+                p.angle += p.rotationalVelocity;
+
+                if (p.y < canvasHeight) {
+                    particlesStillActive = true;
+                }
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.radius, -p.radius, p.radius * 2, p.radius * 2);
+                ctx.restore();
+            });
+
+            if (particlesStillActive) {
+                animationFrameId = requestAnimationFrame(renderLoop);
+            } else {
+                canvas.style.display = 'none';
+                cancelAnimationFrame(animationFrameId);
+            }
+        }
+
+        renderLoop();
+    }
+</script>
+</body>
+</html>

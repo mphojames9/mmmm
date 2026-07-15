@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo & Ink — Premium Language Masterclass & Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0b0d;
+            --bg-secondary: #131317;
+            --bg-card: #1a1a22;
+            --accent-gold: #dfb15b;
+            --accent-gold-glow: rgba(223, 177, 91, 0.15);
+            --accent-amber: #ff9500;
+            --accent-amber-glow: rgba(255, 149, 0, 0.2);
+            --text-main: #f5f5f7;
+            --text-muted: #8e8e93;
+            --success-green: #30d158;
+            --error-red: #ff453a;
+            --card-border: rgba(223, 177, 91, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden; /* Prevent background and body scroll to avoid top/bottom empty spaces */
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: 100%;
+            height: 600px;
+            background: radial-gradient(circle, rgba(223, 177, 91, 0.05) 0%, rgba(0,0,0,0) 80%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 0.6rem 1.4rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            outline: none;
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px var(--accent-gold-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-back svg {
+            fill: currentColor;
+            width: 14px;
+            height: 14px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: 6px;
+            color: var(--accent-gold);
+            text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.6);
+            margin-bottom: 0.2rem;
+        }
+
+        .subtitle {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            max-height: calc(100dvh - 160px); /* Fits perfect vertical sizing snugly */
+            overflow-y: auto; /* Fallback scrolling inside the card if contents overflow on tiny windows */
+            background: var(--bg-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            text-align: center;
+            backdrop-filter: blur(12px);
+            z-index: 10;
+            box-sizing: border-box;
+            flex-direction: column;
+            justify-content: center;
+            flex-shrink: 1;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-gold) var(--bg-secondary);
+        }
+
+        /* Fine custom scrollbar styles for screens */
+        .screen::-webkit-scrollbar {
+            width: 6px;
+        }
+        .screen::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .screen::-webkit-scrollbar-thumb {
+            background-color: var(--accent-gold);
+            border-radius: 3px;
+        }
+
+        .screen.active {
+            display: flex; /* Changed from block to flex to support internal alignments and height optimization */
+            animation: fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tagline {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .mode-select-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .btn-gold {
+            background: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 1.1rem 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            outline: none;
+        }
+
+        .btn-gold:hover {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            box-shadow: 0 6px 25px var(--accent-gold-glow);
+            transform: translateY(-3px);
+        }
+
+        /* World Class Executive Analytics Matrix Dashboard */
+        .dashboard-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+
+        .dashboard-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(223, 177, 91, 0.2);
+            padding-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(223, 177, 91, 0.2);
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .metric-value-iq {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-subtext {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .metric-subtext span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .iq-progress-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            margin-top: 0.8rem;
+            overflow: hidden;
+        }
+
+        .iq-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-amber));
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Interface Metrics inside the active Game Window */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 2px;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-gold);
+            box-shadow: 0 0 12px var(--accent-gold);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 1.2rem;
+            font-weight: 400;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mode-badge {
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .sentence-display {
+            font-size: 1.25rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            padding: 1.5rem 2rem;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            min-height: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .blank-space {
+            color: var(--accent-gold);
+            font-weight: 600;
+            letter-spacing: 2px;
+            padding: 0 8px;
+        }
+
+        .filled-word {
+            color: var(--success-green);
+            font-weight: 600;
+            text-shadow: 0 0 15px rgba(48, 209, 88, 0.3);
+        }
+
+        .revealed-word {
+            color: var(--accent-amber);
+            font-weight: 600;
+            text-shadow: 0 0 15px var(--accent-amber-glow);
+            text-decoration: underline;
+        }
+
+        .word-token {
+            padding: 2px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .word-token:hover {
+            background: var(--accent-gold-glow);
+            color: var(--accent-gold);
+        }
+
+        .word-token.selected-error {
+            background: rgba(223, 177, 91, 0.25);
+            border: 1px solid var(--accent-gold);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .word-token.wrong-selection {
+            background: rgba(255, 69, 58, 0.15);
+            border: 1px solid var(--error-red);
+            color: var(--error-red);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .speaker-box {
+            margin-bottom: 1rem;
+        }
+
+        .btn-speaker {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            outline: none;
+        }
+
+        .btn-speaker svg {
+            fill: var(--accent-gold);
+            width: 22px;
+            height: 22px;
+        }
+
+        .btn-speaker:hover {
+            background: var(--accent-gold-glow);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 30px var(--accent-gold-glow);
+            transform: scale(1.05);
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .input-wrapper.active {
+            display: block;
+        }
+
+        .word-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 200;
+            text-align: center;
+            letter-spacing: 4px;
+            padding: 8px;
+            outline: none;
+            text-transform: lowercase;
+            transition: border-color 0.3s ease;
+        }
+
+        .word-input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .keyboard-container {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .keyboard-container.active {
+            display: flex;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .key-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            height: 44px;
+            min-width: 35px;
+            flex: 1;
+            max-width: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            user-select: none;
+            outline: none;
+        }
+
+        .key-btn:hover:not(:disabled) {
+            background: var(--accent-gold-glow);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        .key-wide {
+            flex: 1.8;
+            max-width: 80px;
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .key-submit {
+            background: rgba(223, 177, 91, 0.1);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .mcq-wrapper {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .mcq-wrapper.active {
+            display: grid;
+        }
+
+        .btn-mcq {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 1.1rem 1.3rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            outline: none;
+            letter-spacing: 1px;
+        }
+
+        .btn-mcq:hover:not(:disabled) {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-mcq.correct {
+            background: var(--success-green) !important;
+            color: var(--bg-primary) !important;
+            border-color: var(--success-green) !important;
+            font-weight: 600;
+        }
+
+        .btn-mcq.wrong {
+            background: var(--error-red) !important;
+            border-color: var(--error-red) !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .shake { animation: shake 0.4s ease-in-out; }
+
+        /* Session Resolution Analytics Screen Layout */
+        .analytics-matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1rem 0;
+            text-align: left;
+        }
+
+        .analysis-block-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .results-score {
+            font-family: 'Cinzel', serif;
+            font-size: 4.5rem;
+            color: var(--accent-gold);
+            line-height: 1;
+        }
+
+        .results-score-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .iq-metric-display {
+            margin-top: 1rem;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--accent-amber);
+            font-weight: 600;
+        }
+
+        .analysis-block-right {
+            background: rgba(255,255,255,0.01);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+            padding: 1.5rem;
+        }
+
+        .analysis-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .analysis-row span:last-child {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        footer {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        /* RESPONSIVE DESIGN ADJUSTMENTS */
+        @media (max-width: 800px) {
+            body {
+                padding: 1rem;
+            }
+            .mode-select-container, .metrics-grid, .analytics-matrix-container { 
+                grid-template-columns: 1fr; 
+                gap: 1rem;
+            }
+            h1 { font-size: 2rem; }
+            .screen { 
+                padding: 1.5rem 1rem; 
+                border-radius: 12px;
+                max-height: calc(100dvh - 120px);
+            }
+            .btn-back { 
+                position: relative; 
+                top: 0; 
+                left: 0; 
+                margin-bottom: 1rem; 
+                align-self: flex-start;
+            }
+            .sentence-display {
+                font-size: 1.1rem;
+                padding: 1.2rem;
+                min-height: auto;
+            }
+            .mcq-wrapper {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            .btn-mcq {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+            .keyboard-container {
+                gap: 4px;
+            }
+            .keyboard-row {
+                gap: 3px;
+            }
+            .key-btn {
+                height: 38px;
+                min-width: auto;
+                max-width: none;
+                border-radius: 4px;
+                font-size: 0.85rem;
+                padding: 0;
+            }
+            .key-wide {
+                font-size: 0.7rem;
+            }
+            .dashboard-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { 
+                font-size: 1.5rem; 
+                letter-spacing: 4px; 
+            }
+            .subtitle {
+                font-size: 0.7rem;
+            }
+            .tagline {
+                font-size: 0.95rem;
+            }
+            .dashboard-panel {
+                padding: 1.2rem 1rem;
+            }
+            .dashboard-title {
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+            .btn-gold {
+                padding: 1rem;
+                font-size: 0.7rem;
+            }
+            .metric-value-iq {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Landscape / Tiny Height Viewports Fallback */
+        @media (max-height: 600px) {
+            body {
+                height: auto;
+                min-height: 100vh;
+                min-height: 100dvh;
+                overflow-y: auto; /* Fallback scrolling for extreme short screens */
+                padding: 1rem;
+            }
+            .screen {
+                max-height: none;
+                overflow-y: visible;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+
+    <button id="btn-back" class="btn-back">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Menu
+    </button>
+
+    <header>
+        <h1>Echo & Ink</h1>
+        <p class="subtitle">Linguistic Diagnostics Engine</p>
+    </header>
+
+    <main id="start-screen" class="screen active">
+        <p class="tagline">
+            An advanced diagnostic interface mapping real-time verbal intelligence, syntactic structural calibration, and contextual oversight tracking.
+        </p>
+        
+        <div class="main-menu-grid">
+            <div class="mode-select-container">
+                <button class="btn-gold" id="btn-start-spelling">Orthography</button>
+                <button class="btn-gold" id="btn-start-grammar">Syntax</button>
+                <button class="btn-gold" id="btn-start-proofread">Proofreading</button>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="dashboard-title">
+                    <span>COGNITIVE INTELLIGENCE PROFILE</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Montserrat';" id="total-sessions">Sessions: 0</span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Orthography IQ</div>
+                        <div class="metric-value-iq" id="dash-spelling-iq">100</div>
+                        <div class="metric-subtext">Accuracy: <span id="dash-spelling-acc">0%</span></div>
+                        <div class="iq-progress-track"><div id="dash-spelling-fill" class="iq-progress-fill"></div></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Syntax IQ</div>
+                        <div class="metric-value-iq" id="dash-grammar-iq">100</div>
+                        <div class="metric-subtext">Accuracy: <span id="dash-grammar-acc">0%</span></div>
+                        <div class="iq-progress-track"><div id="dash-grammar-fill" class="iq-progress-fill"></div></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Proofreading IQ</div>
+                        <div class="metric-value-iq" id="dash-proofread-iq">100</div>
+                        <div class="metric-subtext">Accuracy: <span id="dash-proofread-acc">0%</span></div>
+                        <div class="iq-progress-track"><div id="dash-proofread-fill" class="iq-progress-fill"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="game-screen" class="screen">
+        <div class="progress-container">
+            <div id="progress" class="progress-bar"></div>
+        </div>
+
+        <div class="status-row">
+            <span id="word-index">Matrix 1 of 10</span>
+            <span id="mode-display" class="mode-badge">Initializing</span>
+            <span>
+                <span id="word-streak" style="margin-right: 12px;">Streak: 0</span>
+                <span id="score-display" style="color: var(--accent-gold);">Score: 0</span>
+            </span>
+        </div>
+
+        <div id="sentence-display" class="sentence-display"></div>
+
+        <div class="speaker-box">
+            <button class="btn-speaker" id="btn-speak" title="Trigger Phonetic Synthesis">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div id="text-input-container" class="input-wrapper">
+            <div id="correction-badge" style="font-size: 0.8rem; color: var(--accent-gold); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;"></div>
+            <input type="text" id="input-word" class="word-input" autocomplete="off" spellcheck="false" placeholder="Awaiting Input...">
+            <div id="virtual-keyboard" class="keyboard-container"></div>
+        </div>
+
+        <div id="grammar-container" class="mcq-wrapper"></div>
+    </main>
+
+    <main id="results-screen" class="screen">
+        <div class="subtitle">Diagnostic Analysis Finalized</div>
+        
+        <div class="analytics-matrix-container">
+            <div class="analysis-block-left">
+                <div class="results-score" id="final-score">0 / 0</div>
+                <div class="results-score-label">Accuracy Ratio</div>
+                <div class="iq-metric-display" id="final-iq-display">IQ 100</div>
+                <div class="subtitle" style="font-size:0.65rem; margin-top:0.2rem; color:var(--accent-gold);" id="iq-classification">Standard Calibration</div>
+            </div>
+            
+            <div class="analysis-block-right">
+                <div class="analysis-row"><span>Discipline Assessed:</span><span id="meta-discipline">-</span></div>
+                <div class="analysis-row"><span>Gross Session Score:</span><span id="meta-score">0</span></div>
+                <div class="analysis-row"><span>Highest Operational Streak:</span><span id="meta-streak">0</span></div>
+                <div class="analysis-row"><span>Critical Volatility Penalties:</span><span id="meta-penalties">0</span></div>
+                <div class="analysis-row"><span>Cognitive Tier Status:</span><span id="meta-tier">-</span></div>
+            </div>
+        </div>
+
+        <p class="tagline" id="results-feedback" style="font-size: 0.95rem; margin-bottom: 2rem;"></p>
+        <button class="btn-gold" id="btn-restart">Recalibrate Profile</button>
+    </main>
+
+    <footer>
+        Cognitive Metrics Evaluation Pipeline &bull; Pure Minimalist Synthesis
+    </footer>
+
+    <script>
+        // Data Definitions
+        const SPELLING_DB = [
+            { word: "autumn", hint: "The golden leaves fell softly from the trees in autumn." },
+            { word: "breeze", hint: "A gentle evening breeze cooled the warm, sun-baked balcony." },
+            { word: "crystal", hint: "The mountain spring was so clean, the water looked crystal clear." },
+            { word: "echo", hint: "Her voice created a beautiful echo down the long, empty stone corridor." },
+            { word: "harmony", hint: "The instruments blended perfectly together in absolute harmony." },
+            { word: "journey", hint: "They packed light, preparing for a long and difficult journey." },
+            { word: "serene", hint: "The silent lake under the moonlight looked incredibly calm and serene." },
+            { word: "velvet", hint: "The box was lined with a luxurious, dark purple velvet." },
+            { word: "whisper", hint: "He spoke in a quiet whisper so as not to wake the sleeping child." },
+            { word: "luminous", hint: "The ocean waves danced with luminous blue algae in the dark." }
+        ];
+
+        const GRAMMAR_DB = [
+            { sentence: "She always _______ her shoes before entering the quiet sanctuary.", options: ["remove", "removes", "removed", "removing"], answer: "removes" },
+            { sentence: "Yesterday, the master craftsman _______ a delicate bird from walnut wood.", options: ["carve", "carves", "carved", "carving"], answer: "carved" },
+            { sentence: "If the morning sky remains clear, we will _______ for the valley at dawn.", options: ["depart", "departs", "departed", "departing"], answer: "depart" },
+            { sentence: "Not a single word was _______ during the solemn candlelit ceremony.", options: ["speak", "speaks", "spoke", "spoken"], answer: "spoken" },
+            { sentence: "The autumn letters were carefully _______ with an antique fountain pen.", options: ["write", "writes", "wrote", "written"], answer: "written" },
+            { sentence: "He has _______ along this foggy coastal path many times before.", options: ["walk", "walks", "walked", "walking"], answer: "walked" },
+            { sentence: "The cool evening breeze gently _______ the brass wind chimes on the porch.", options: ["shake", "shakes", "shook", "shaken"], answer: "shakes" },
+            { sentence: "By the time the guests arrived, the musicians had already _______.", options: ["leave", "leaves", "left", "leaving"], answer: "left" },
+            { sentence: "The library regulations require that every student _______ in absolute silence.", options: ["study", "studies", "studied", "studying"], answer: "study" },
+            { sentence: "A chorus of songbirds _______ every morning in the sunlit courtyard.", options: ["sing", "sings", "sang", "sung"], answer: "sings" }
+        ];
+
+        const PROOFREAD_DB = [
+            { sentence: "She always remove her shoes before entering the quiet sanctuary.", errorWord: "remove", correction: "removes" },
+            { sentence: "The mountain spring was so clean, the water looked cristel clear.", errorWord: "cristel", correction: "crystal" },
+            { sentence: "Yesterday, the master craftsman carve a delicate bird from walnut wood.", errorWord: "carve", correction: "carved" },
+            { sentence: "Her voice created a beautiful eko down the long stone corridor.", errorWord: "eko", correction: "echo" },
+            { sentence: "Not a single word was spoke during the solemn candlelit ceremony.", errorWord: "spoke", correction: "spoken" },
+            { sentence: "They packed light, preparing for a long and difficult jurney.", errorWord: "jurney", correction: "journey" },
+            { sentence: "By the time the guests arrived, the musicians had already leave.", errorWord: "leave", correction: "left" },
+            { sentence: "The silent lake under the moonlight looked incredibly calm and sereen.", errorWord: "sereen", correction: "serene" },
+            { sentence: "He spoke in a quiet wisper so as not to wake the sleeping child.", errorWord: "wisper", correction: "whisper" },
+            { sentence: "The ocean waves danced with luminus blue algae in the dark.", errorWord: "luminus", correction: "luminous" }
+        ];
+
+        // Core App Architecture State
+        let currentMode = 'spelling';
+        let gameItems = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let currentStreak = 0;
+        let peakStreak = 0;
+        let penaltyCount = 0;
+        let savedRetriesAccumulator = 0;
+        let selectedProofreadToken = null;
+        let selectedProofreadWord = "";
+        let attemptsLeft = 2;
+
+        let audioCtx = null;
+        let synthesizer = window.speechSynthesis;
+
+        // Persistent Analytics Profile Blueprint with Global Unified Score
+        let profileMetrics = {
+            totalSessions: 0,
+            globalScore: 0, // Score unified across all modes
+            spelling: { computedIQ: 100, recordAccuracy: 0, activeProgress: 0 },
+            grammar: { computedIQ: 100, recordAccuracy: 0, activeProgress: 0 },
+            proofread: { computedIQ: 100, recordAccuracy: 0, activeProgress: 0 }
+        };
+
+        // Screen DOM elements
+        const screenStart = document.getElementById('start-screen');
+        const screenGame = document.getElementById('game-screen');
+        const screenResults = document.getElementById('results-screen');
+        const btnBack = document.getElementById('btn-back');
+
+        // Input Containers
+        const textInputContainer = document.getElementById('text-input-container');
+        const virtualKeyboard = document.getElementById('virtual-keyboard');
+        const grammarContainer = document.getElementById('grammar-container');
+        const correctionBadge = document.getElementById('correction-badge');
+        const sentenceDisplay = document.getElementById('sentence-display');
+        const inputWord = document.getElementById('input-word');
+        const progress = document.getElementById('progress');
+
+        // Dynamic State Metrics
+        const wordIndexLabel = document.getElementById('word-index');
+        const modeDisplay = document.getElementById('mode-display');
+        const wordStreakLabel = document.getElementById('word-streak');
+        const scoreDisplay = document.getElementById('score-display');
+
+        // Initialize Analytics Profile
+        function initAnalyticsProfile() {
+            const data = localStorage.getItem('echo_ink_analytics_profile_v3');
+            if (data) {
+                try {
+                    profileMetrics = JSON.parse(data);
+                } catch(e) {
+                    console.error("Profile corrupted, rebuilding profile matrix map data layers.");
+                }
+            }
+            renderGlobalDashboardUI();
+        }
+
+        function saveProfileToLocalStorage() {
+            localStorage.setItem('echo_ink_analytics_profile_v3', JSON.stringify(profileMetrics));
+            renderGlobalDashboardUI();
+        }
+
+        function renderGlobalDashboardUI() {
+            document.getElementById('total-sessions').textContent = `Sessions: ${profileMetrics.totalSessions}`;
+            
+            // Render Orthography Metric Array
+            document.getElementById('dash-spelling-iq').textContent = Math.round(profileMetrics.spelling.computedIQ);
+            document.getElementById('dash-spelling-acc').textContent = `${Math.round(profileMetrics.spelling.recordAccuracy)}%`;
+            document.getElementById('dash-spelling-fill').style.width = `${((profileMetrics.spelling.computedIQ - 70) / 90) * 100}%`;
+
+            // Render Syntax Metric Array
+            document.getElementById('dash-grammar-iq').textContent = Math.round(profileMetrics.grammar.computedIQ);
+            document.getElementById('dash-grammar-acc').textContent = `${Math.round(profileMetrics.grammar.recordAccuracy)}%`;
+            document.getElementById('dash-grammar-fill').style.width = `${((profileMetrics.grammar.computedIQ - 70) / 90) * 100}%`;
+
+            // Render Proofreading Metric Array
+            document.getElementById('dash-proofread-iq').textContent = Math.round(profileMetrics.proofread.computedIQ);
+            document.getElementById('dash-proofread-acc').textContent = `${Math.round(profileMetrics.proofread.recordAccuracy)}%`;
+            document.getElementById('dash-proofread-fill').style.width = `${((profileMetrics.proofread.computedIQ - 70) / 90) * 100}%`;
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playClickTone() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.04);
+            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function playSuccessMelody() {
+            if (!audioCtx) return;
+            const baseTime = audioCtx.currentTime;
+            const scale = [293.66, 381.99, 587.33]; // Suspended luxury chord spacing
+            scale.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, baseTime + idx * 0.06);
+                gain.gain.setValueAtTime(0, baseTime);
+                gain.gain.linearRampToValueAtTime(0.08, baseTime + idx * 0.06 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, baseTime + idx * 0.06 + 0.35);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(baseTime + idx * 0.06); osc.stop(baseTime + idx * 0.06 + 0.4);
+            });
+        }
+
+        function playErrorDissonance() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(130, now);
+            osc.frequency.linearRampToValueAtTime(85, now + 0.25);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.08, now + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(now + 0.28);
+        }
+
+        function vocalizeContext(text, speed = 0.85) {
+            if (synthesizer.speaking) synthesizer.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = synthesizer.getVoices();
+            const preferredVoice = voices.find(v => v.name.includes("Google") || v.lang.startsWith("en-GB"));
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = speed;
+            synthesizer.speak(utterance);
+        }
+
+        function buildKeyboardMatrix() {
+            virtualKeyboard.innerHTML = '';
+            const rows = [
+                ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+                ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+                ['⌫', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '↵']
+            ];
+            rows.forEach(row => {
+                const elementRow = document.createElement('div');
+                elementRow.className = 'keyboard-row';
+                row.forEach(char => {
+                    const btn = document.createElement('button');
+                    btn.className = 'key-btn';
+                    if (char === '⌫') {
+                        btn.classList.add('key-wide');
+                        btn.addEventListener('click', () => { inputWord.value = inputWord.value.slice(0, -1); playClickTone(); inputWord.focus(); });
+                    } else if (char === '↵') {
+                        btn.classList.add('key-wide', 'key-submit');
+                        btn.addEventListener('click', () => processTokenVerification());
+                    } else {
+                        btn.textContent = char;
+                        btn.addEventListener('click', () => { inputWord.value += char; playClickTone(); inputWord.focus(); });
+                    }
+                    elementRow.appendChild(btn);
+                });
+                virtualKeyboard.appendChild(elementRow);
+            });
+        }
+
+        function initializeDiagnosticRun(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            correctCount = 0;
+            currentStreak = 0;
+            peakStreak = 0;
+            penaltyCount = 0;
+            savedRetriesAccumulator = 0;
+
+            if (currentMode === 'spelling') {
+                gameItems = [...SPELLING_DB].sort(() => Math.random() - 0.5);
+                textInputContainer.className = "input-wrapper active";
+                virtualKeyboard.className = "keyboard-container active";
+                grammarContainer.className = "mcq-wrapper";
+                correctionBadge.textContent = "";
+                modeDisplay.textContent = "Orthography Mode";
+            } else if (currentMode === 'grammar') {
+                gameItems = [...GRAMMAR_DB].sort(() => Math.random() - 0.5);
+                textInputContainer.className = "input-wrapper";
+                virtualKeyboard.className = "keyboard-container";
+                grammarContainer.className = "mcq-wrapper active";
+                modeDisplay.textContent = "Syntax Mode";
+            } else if (currentMode === 'proofread') {
+                gameItems = [...PROOFREAD_DB].sort(() => Math.random() - 0.5);
+                textInputContainer.className = "input-wrapper active";
+                virtualKeyboard.className = "keyboard-container active";
+                grammarContainer.className = "mcq-wrapper";
+                correctionBadge.textContent = "Select operational token error";
+                modeDisplay.textContent = "Proofreading Mode";
+            }
+            showScreen(screenGame);
+            stageAssessmentMatrix();
+        }
+
+        function showScreen(targetScreen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            targetScreen.classList.add('active');
+            btnBack.style.display = (targetScreen === screenStart) ? 'none' : 'flex';
+        }
+
+        function stageAssessmentMatrix() {
+            const item = gameItems[currentIndex];
+            attemptsLeft = 2;
+            selectedProofreadToken = null;
+            selectedProofreadWord = "";
+            
+            // Save active index progress of this mode to localStorage
+            profileMetrics[currentMode].activeProgress = currentIndex;
+            saveProfileToLocalStorage();
+
+            wordIndexLabel.textContent = `Matrix ${currentIndex + 1} of ${gameItems.length}`;
+            wordStreakLabel.textContent = `Streak: ${currentStreak}`;
+            scoreDisplay.textContent = `Score: ${profileMetrics.globalScore}`;
+            progress.style.width = `${(currentIndex / gameItems.length) * 100}%`;
+
+            inputWord.value = "";
+            inputWord.disabled = false;
+            inputWord.style.borderColor = "rgba(255,255,255,0.1)";
+            inputWord.style.color = "var(--text-main)";
+
+            if (currentMode === 'spelling') {
+                inputWord.placeholder = "type decoded target word...";
+                const regex = new RegExp(`\\b${item.word}\\b`, 'gi');
+                sentenceDisplay.innerHTML = item.hint.replace(regex, `<span class="blank-space">_________</span>`);
+                setTimeout(() => vocalizeContext(item.word), 350);
+            } else if (currentMode === 'grammar') {
+                sentenceDisplay.innerHTML = item.sentence.replace("_______", `<span class="blank-space">_________</span>`);
+                grammarContainer.innerHTML = "";
+                const choices = [...item.options].sort(() => Math.random() - 0.5);
+                choices.forEach(choice => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-mcq';
+                    btn.textContent = choice;
+                    btn.addEventListener('click', () => processSyntaxOption(btn, choice));
+                    grammarContainer.appendChild(btn);
+                });
+                setTimeout(() => vocalizeContext(item.sentence.replace("_______", "blank")), 350);
+            } else if (currentMode === 'proofread') {
+                inputWord.placeholder = "type correct orthographic match...";
+                correctionBadge.textContent = "Select targets inside the phrase configuration above";
+                sentenceDisplay.innerHTML = "";
+                item.sentence.split(' ').forEach(word => {
+                    const token = document.createElement('span');
+                    token.className = 'word-token';
+                    token.textContent = word + " ";
+                    token.addEventListener('click', () => {
+                        playClickTone();
+                        document.querySelectorAll('.word-token').forEach(t => t.className = 'word-token');
+                        token.className = 'word-token selected-error';
+                        selectedProofreadToken = token;
+                        selectedProofreadWord = word.replace(/[.,!?;:\"']/g, '').trim().toLowerCase();
+                        correctionBadge.textContent = `Modifying element: "${selectedProofreadWord}"`;
+                        inputWord.focus();
+                    });
+                    sentenceDisplay.appendChild(token);
+                });
+                setTimeout(() => vocalizeContext(item.sentence), 350);
+            }
+        }
+
+        function processSyntaxOption(element, choice) {
+            if (element.disabled) return;
+            const correctAnswer = gameItems[currentIndex].answer;
+            if (choice === correctAnswer) {
+                element.classList.add('correct');
+                executeSuccessState(correctAnswer);
+            } else {
+                element.classList.add('wrong');
+                executeFailureState(element);
+            }
+        }
+
+        function processTokenVerification() {
+            const clientInput = inputWord.value.trim().toLowerCase();
+            if (clientInput === "" || inputWord.disabled) return;
+            const item = gameItems[currentIndex];
+
+            if (currentMode === 'spelling') {
+                if (clientInput === item.word.toLowerCase()) {
+                    executeSuccessState(item.word);
+                } else {
+                    executeFailureState(inputWord);
+                }
+            } else if (currentMode === 'proofread') {
+                if (!selectedProofreadToken) {
+                    correctionBadge.classList.add('shake');
+                    playErrorDissonance();
+                    setTimeout(() => correctionBadge.classList.remove('shake'), 400);
+                    return;
+                }
+                if (selectedProofreadWord === item.errorWord.toLowerCase() && clientInput === item.correction.toLowerCase()) {
+                    executeSuccessState(item.correction);
+                } else {
+                    executeFailureState(selectedProofreadToken ? selectedProofreadToken : inputWord);
+                }
+            }
+        }
+
+        function executeSuccessState(resolvedWord) {
+            playSuccessMelody();
+            correctCount++;
+            currentStreak++;
+            if (currentStreak > peakStreak) peakStreak = currentStreak;
+            
+            // Add to unified global score
+            profileMetrics.globalScore += 100;
+            saveProfileToLocalStorage();
+
+            savedRetriesAccumulator += (attemptsLeft - 1);
+
+            if (currentMode === 'spelling') {
+                const r = new RegExp(`\\b${resolvedWord}\\b`, 'gi');
+                sentenceDisplay.innerHTML = gameItems[currentIndex].hint.replace(r, `<span class="filled-word">${resolvedWord}</span>`);
+            } else if (currentMode === 'grammar') {
+                sentenceDisplay.innerHTML = gameItems[currentIndex].sentence.replace("_______", `<span class="filled-word">${resolvedWord}</span>`);
+                document.querySelectorAll('.btn-mcq').forEach(b => b.disabled = true);
+            } else if (currentMode === 'proofread') {
+                if (selectedProofreadToken) {
+                    selectedProofreadToken.className = "filled-word";
+                    selectedProofreadToken.textContent = gameItems[currentIndex].correction + " ";
+                }
+            }
+
+            inputWord.disabled = true;
+            inputWord.style.color = "var(--success-green)";
+            inputWord.style.borderColor = "var(--success-green)";
+
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex < gameItems.length) stageAssessmentMatrix();
+                else resolveSessionDiagnostics();
+            }, 1200);
+        }
+
+        function executeFailureState(domElement) {
+            playErrorDissonance();
+            attemptsLeft--;
+            currentStreak = 0;
+            penaltyCount++;
+
+            // Deduct exactly 30% of current unified global score
+            profileMetrics.globalScore = Math.round(profileMetrics.globalScore * 0.7);
+            saveProfileToLocalStorage();
+            
+            wordStreakLabel.textContent = `Streak: ${currentStreak}`;
+            scoreDisplay.textContent = `Score: ${profileMetrics.globalScore}`;
+
+            domElement.classList.add('shake');
+            setTimeout(() => domElement.classList.remove('shake'), 400);
+
+            if (attemptsLeft > 0) {
+                if (currentMode !== 'grammar') {
+                    inputWord.value = "";
+                    inputWord.placeholder = "Operational retry sequence active...";
+                    inputWord.focus();
+                }
+            } else {
+                bypassDisplayRecovery();
+            }
+        }
+
+        function bypassDisplayRecovery() {
+            const item = gameItems[currentIndex];
+            inputWord.disabled = true;
+            inputWord.style.color = "var(--accent-amber)";
+            inputWord.style.borderColor = "var(--accent-amber)";
+
+            if (currentMode === 'spelling') {
+                const r = new RegExp(`\\b${item.word}\\b`, 'gi');
+                sentenceDisplay.innerHTML = item.hint.replace(r, `<span class="revealed-word">${item.word}</span>`);
+                inputWord.value = item.word;
+            } else if (currentMode === 'grammar') {
+                sentenceDisplay.innerHTML = item.sentence.replace("_______", `<span class="revealed-word">${item.answer}</span>`);
+                document.querySelectorAll('.btn-mcq').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === item.answer) b.classList.add('correct');
+                });
+            } else if (currentMode === 'proofread') {
+                document.querySelectorAll('.word-token').forEach(token => {
+                    const clean = token.textContent.replace(/[.,!?;:\"']/g, '').trim().toLowerCase();
+                    if (clean === item.errorWord.toLowerCase()) {
+                        token.className = "revealed-word";
+                        token.textContent = item.correction + " ";
+                    }
+                });
+                inputWord.value = item.correction;
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex < gameItems.length) stageAssessmentMatrix();
+                else resolveSessionDiagnostics();
+            }, 2200);
+        }
+
+        function resolveSessionDiagnostics() {
+            progress.style.width = "100%";
+            profileMetrics.totalSessions += 1;
+
+            const baseAccuracy = (correctCount / gameItems.length) * 100;
+            let dynamicComputedIQ = 100;
+
+            // Operational Cognitive Logic Allocations
+            if (currentMode === 'spelling') {
+                dynamicComputedIQ = 75 + (baseAccuracy * 0.6) + (peakStreak * 2.5);
+                profileMetrics.spelling.recordAccuracy = Math.max(profileMetrics.spelling.recordAccuracy, baseAccuracy);
+                profileMetrics.spelling.computedIQ = Math.max(profileMetrics.spelling.computedIQ, dynamicComputedIQ);
+                profileMetrics.spelling.activeProgress = 0; // Reset on completion
+            } else if (currentMode === 'grammar') {
+                dynamicComputedIQ = 70 + (baseAccuracy * 0.65) + (profileMetrics.globalScore / 200);
+                profileMetrics.grammar.recordAccuracy = Math.max(profileMetrics.grammar.recordAccuracy, baseAccuracy);
+                profileMetrics.grammar.computedIQ = Math.max(profileMetrics.grammar.computedIQ, dynamicComputedIQ);
+                profileMetrics.grammar.activeProgress = 0; // Reset on completion
+            } else if (currentMode === 'proofread') {
+                const avgRetriesSaved = correctCount > 0 ? (savedRetriesAccumulator / gameItems.length) : 0;
+                dynamicComputedIQ = 80 + (baseAccuracy * 0.55) + (avgRetriesSaved * 5);
+                profileMetrics.proofread.recordAccuracy = Math.max(profileMetrics.proofread.recordAccuracy, baseAccuracy);
+                profileMetrics.proofread.computedIQ = Math.max(profileMetrics.proofread.computedIQ, dynamicComputedIQ);
+                profileMetrics.proofread.activeProgress = 0; // Reset on completion
+            }
+
+            if (dynamicComputedIQ > 160) dynamicComputedIQ = 160; // Cap at peak ceiling
+
+            // Setup display output
+            document.getElementById('final-score').textContent = `${correctCount} / ${gameItems.length}`;
+            document.getElementById('final-iq-display').textContent = `IQ ${Math.round(dynamicComputedIQ)}`;
+            
+            // Classification categorization Mapping
+            let tier = "Standard Performance";
+            if (dynamicComputedIQ >= 140) tier = "Theoretical Genius Tier Status";
+            else if (dynamicComputedIQ >= 120) tier = "High Superior Intelligence Capability";
+            else if (dynamicComputedIQ >= 100) tier = "Average Analytical Competence";
+            else tier = "Marginal Processing Scale";
+
+            document.getElementById('iq-classification').textContent = tier;
+            document.getElementById('meta-discipline').textContent = currentMode.toUpperCase();
+            document.getElementById('meta-score').textContent = profileMetrics.globalScore;
+            document.getElementById('meta-streak').textContent = peakStreak;
+            document.getElementById('meta-penalties').textContent = penaltyCount;
+            document.getElementById('meta-tier').textContent = tier.split(" ")[0];
+
+            // Feedback strings
+            if (baseAccuracy === 100) {
+                document.getElementById('results-feedback').textContent = "Diagnostic scan registers immaculate operational precision. Cognitive pathways demonstrate dynamic fluid adaptation and absolute error mitigation under testing constraints.";
+            } else if (baseAccuracy >= 70) {
+                document.getElementById('results-feedback').textContent = "Advanced lexical awareness confirmed. Minimal structural variance detected; execution metrics show consistent pattern evaluation performance layers.";
+            } else {
+                document.getElementById('results-feedback').textContent = "Stabilized linguistic baseline tracking. System recommends processing track repetition sequences to refine rapid semantic validation and lower accuracy volatility.";
+            }
+
+            saveProfileToLocalStorage();
+            showScreen(screenResults);
+        }
+
+        // Global Event Hooks Container Base
+        window.addEventListener('DOMContentLoaded', () => {
+            initAnalyticsProfile();
+            buildKeyboardMatrix();
+
+            btnBack.addEventListener('click', () => {
+                if (synthesizer.speaking) synthesizer.cancel();
+                playClickTone();
+                showScreen(screenStart);
+            });
+
+            document.getElementById('btn-start-spelling').addEventListener('click', () => { initAudio(); initializeDiagnosticRun('spelling'); });
+            document.getElementById('btn-start-grammar').addEventListener('click', () => { initAudio(); initializeDiagnosticRun('grammar'); });
+            document.getElementById('btn-start-proofread').addEventListener('click', () => { initAudio(); initializeDiagnosticRun('proofread'); });
+
+            document.getElementById('btn-speak').addEventListener('click', () => {
+                const item = gameItems[currentIndex];
+                if (!item) return;
+                playClickTone();
+                if (currentMode === 'spelling') vocalizeContext(item.word);
+                else if (currentMode === 'grammar') vocalizeContext(item.sentence.replace("_______", "blank"), 0.9);
+                else if (currentMode === 'proofread') vocalizeContext(item.sentence, 0.9);
+            });
+
+            inputWord.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') processTokenVerification();
+            });
+
+            document.getElementById('btn-restart').addEventListener('click', () => {
+                playClickTone();
+                showScreen(screenStart);
+            });
+        });
+    </script>
+</body>
+</html>

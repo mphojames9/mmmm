@@ -97,7 +97,12 @@ let lastWordTimestamp = Date.now();
 // ==========================================
 // PREMIUM DAILY MISSION DATABANK CONFIGURATION
 // ==========================================
-let dailyMissions = [
+// ==========================================
+// PREMIUM DAILY MISSION DATABANK CONFIGURATION
+// ==========================================
+
+// 1. Keep the base templates untouched
+const DEFAULT_DAILY_MISSIONS = [
     { id: 'extraWords', text: 'Find 20 Extra Words', target: 20, progress: 0, reward: 200, claimed: false },
     { id: 'speedRun', text: 'Finish a Level Under 2 Mins', target: 1, progress: 0, reward: 150, claimed: false },
     { id: 'complete10', text: 'Complete 10 Levels', target: 10, progress: 0, reward: 150, claimed: false },
@@ -105,8 +110,11 @@ let dailyMissions = [
     { id: 'complete20', text: 'Complete 20 Levels', target: 20, progress: 0, reward: 250, claimed: false },
     { id: 'complete50', text: 'Complete 50 Levels', target: 50, progress: 0, reward: 1000, claimed: false },
     { id: 'watchAds', text: 'Watch 5 Dynamic Ad Clips', target: 5, progress: 0, reward: 1000, claimed: false },
-    { id: 'internetTime', text: 'Stay Online for 5 Minutes', target: 300, progress: 0, reward: 300, claimed: false } // 300 secs = 5 mins
+    { id: 'internetTime', text: 'Stay Online for 5 Minutes', target: 300, progress: 0, reward: 300, claimed: false }
 ];
+
+// Initialize the active array
+let dailyMissions = loadOrResetDailyMissions();
 
 // DOM Target Nodes
 const boardEl = document.getElementById('board');
@@ -136,9 +144,9 @@ setInterval(() => {
     }
 }, 1000);
 
-// === SAVE / LOAD SYSTEM ===
 function saveGameDaily() {
     const gameState = {
+        date: new Date().toDateString(),
         score,
         coins,
         dailyMissions
@@ -148,6 +156,9 @@ function saveGameDaily() {
         'premiumWordSearchDailySave',
         JSON.stringify(gameState)
     );
+    
+    // ---> ADD THIS LINE HERE TO AUTO-SYNC TO GOOGLE:
+    if (typeof window.savePlayerScore === 'function') window.savePlayerScore();
 }
 
 function loadDailySave() {
@@ -161,11 +172,31 @@ function loadDailySave() {
     dailyMissions = state.dailyMissions;
 }
 
+// 2. Load missions based on the current date
+function loadOrResetDailyMissions() {
+    const today = new Date().toDateString(); // Grabs the current date string
+    const savedRaw = localStorage.getItem('premiumWordSearchDailySave');
+    
+    if (savedRaw) {
+        try {
+            const state = JSON.parse(savedRaw);
+            // If the save is from today, load the saved progress
+            if (state.date === today && state.dailyMissions) {
+                return state.dailyMissions;
+            }
+        } catch (e) { 
+            console.error("Error parsing daily save for missions", e); 
+        }
+    }
+    
+    // If it's a new day (past midnight) or no save exists, return fresh defaults
+    return JSON.parse(JSON.stringify(DEFAULT_DAILY_MISSIONS));
+}
+
 
 function saveGame() {
-
-    // Standard save for Campaign Mode
     const gameState = {
+        date: new Date().toDateString(),
         currentLevelIdx: currentLevelIdx,
         score: score,
         coins: coins,
@@ -182,6 +213,9 @@ function saveGame() {
         dailyMissions: dailyMissions
     };
     localStorage.setItem('premiumWordSearchSave', JSON.stringify(gameState));
+    
+    // ---> ADD THIS LINE HERE TO AUTO-SYNC TO GOOGLE:
+    if (typeof window.savePlayerScore === 'function') window.savePlayerScore();
 }
 
 function loadSavedGame() {
@@ -283,19 +317,30 @@ function mergeSaveDataAndUpdateUI() {
     score = Math.max(dailyScore, campaignScore);
     coins = Math.max(dailyCoins, campaignCoins);
 
-    // 5. Smart-merge Daily Missions (Takes the highest progress to prevent data loss)
+   // 5. Smart-merge Daily Missions (Takes the highest progress to prevent data loss)
+    const today = new Date().toDateString();
+    
     if (dailyMissionsData.length > 0 || campaignMissionsData.length > 0) {
         dailyMissions.forEach(mission => {
+            // Only pull campaign mission data if the campaign save was also updated today
+            let campaignSaveIsCurrent = false;
+            if (campaignSaveRaw) {
+                 try {
+                     const cSave = JSON.parse(campaignSaveRaw);
+                     if (cSave.date === today) campaignSaveIsCurrent = true;
+                 } catch (e) {}
+            }
+
             const dMission = dailyMissionsData.find(m => m.id === mission.id);
-            const cMission = campaignMissionsData.find(m => m.id === mission.id);
+            const cMission = campaignSaveIsCurrent ? campaignMissionsData.find(m => m.id === mission.id) : null;
             
             const dProgress = dMission ? dMission.progress : 0;
             const cProgress = cMission ? cMission.progress : 0;
             
-            // Keep whichever save had more progress
+            // Keep whichever save had more progress for today
             mission.progress = Math.max(dProgress, cProgress);
             
-            // If it was claimed in EITHER save, it stays claimed
+            // If it was claimed in EITHER save today, it stays claimed
             if ((dMission && dMission.claimed) || (cMission && cMission.claimed)) {
                 mission.claimed = true;
             }
@@ -757,7 +802,7 @@ function processWordSubmission(r1, c1, r2, c2, highlightElement) {
         score += 100;
         coins += 25; 
         updateEconomyUI();
-        if (isDailyMissionActive) saveGameDaily(); else saveGame();
+        saveGameDaily(); saveGame();
         
 
         if (foundWords.size === activeWords.length) {
@@ -802,7 +847,7 @@ function processWordSubmission(r1, c1, r2, c2, highlightElement) {
         
         coins += 10; 
         updateEconomyUI();
-        if (isDailyMissionActive) saveGameDaily(); else saveGame();
+        saveGameDaily(); saveGame();
         
         return;
     }
@@ -935,7 +980,7 @@ window.grantAdReward = function(powerupType) {
 if (adsMission && adsMission.progress < adsMission.target) {
     adsMission.progress++;
 }
-    if (isDailyMissionActive) saveGameDaily(); else saveGame();
+    saveGameDaily(); saveGame();
 
     if (powerupType === 'hint') {
         executeHint(true); 
@@ -1011,7 +1056,7 @@ if(m20 && m20.progress < m20.target) m20.progress++;
 let m50 = dailyMissions.find(m => m.id === 'complete50');
 if(m50 && m50.progress < m50.target) m50.progress++;
 
-    if (isDailyMissionActive) saveGameDaily(); else saveGame();
+    saveGameDaily(); saveGame();
 
     const totalBaseScore = activeWords.length * 100;
     overlayBaseScoreEl.textContent = `+${totalBaseScore}`;
@@ -2081,6 +2126,136 @@ function claimMissionReward(missionId, elementButtonRef) {
     }
 }
 
+function openMoreGamesModal() {
+    if (typeof audioEngine !== 'undefined' && audioEngine.playClick) audioEngine.playClick();
+    
+    const gamesHtml = `
+        <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 10px; max-height: 420px; overflow-y: auto;">
+            <p style="color: #a0aec0; font-size: 13px; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
+                Expand your library
+            </p>
+
+            <a href="./otherGames/2028.html" class="premium-game-card">
+                <div class="pgc-icon" style="background: linear-gradient(135deg, #ff416c, #d32f2f); box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);">
+                    2028
+                </div>
+                <div class="pgc-content">
+                    <h4>2028 Matrix</h4>
+                    <p>Strategic number fusion</p>
+                </div>
+                <div class="pgc-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            </a>
+
+            <a href="./otherGames/lexa.html" class="premium-game-card">
+                <div class="pgc-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe); box-shadow: 0 4px 10px rgba(79, 172, 254, 0.4); font-size: 20px;">
+                    LX
+                </div>
+                <div class="pgc-content">
+                    <h4>Lexa</h4>
+                    <p>Advanced word anagrams</p>
+                </div>
+                <div class="pgc-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            </a>
+
+            <a href="./otherGames/quizz.html" class="premium-game-card">
+                <div class="pgc-icon" style="background: linear-gradient(135deg, #9b51e0, #6f42c1); box-shadow: 0 4px 10px rgba(155, 81, 224, 0.4); font-size: 20px;">
+                    QZ
+                </div>
+                <div class="pgc-content">
+                    <h4>Quizz Master</h4>
+                    <p>Global trivia championship</p>
+                </div>
+                <div class="pgc-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            </a>
+        </div>
+
+        <style>
+            /* Premium Game Card Layout */
+            .premium-game-card {
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 16px;
+                padding: 14px;
+                box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 8px 16px rgba(0, 0, 0, 0.15);
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            
+            /* Avatar Thumbnail */
+            .premium-game-card .pgc-icon {
+                width: 52px;
+                height: 52px;
+                border-radius: 14px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-weight: 900;
+                font-size: 15px;
+                margin-right: 16px;
+                flex-shrink: 0;
+            }
+
+            /* Text Content */
+            .premium-game-card .pgc-content {
+                flex-grow: 1;
+                text-align: left;
+            }
+            .premium-game-card .pgc-content h4 {
+                margin: 0;
+                color: #ffffff;
+                font-size: 16px;
+                font-weight: 800;
+                letter-spacing: 0.5px;
+            }
+            .premium-game-card .pgc-content p {
+                margin: 4px 0 0 0;
+                color: #7a9c9f;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            /* Call to Action Arrow */
+            .premium-game-card .pgc-arrow {
+                background: rgba(255, 255, 255, 0.08);
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                color: var(--gold, #f4c053);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.3s ease, background 0.3s ease;
+            }
+
+            /* Hover & Active Physics */
+            .premium-game-card:hover {
+                transform: translateY(-4px);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+                border-color: rgba(255, 255, 255, 0.3);
+                box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 12px 24px rgba(0, 0, 0, 0.3);
+            }
+            .premium-game-card:hover .pgc-arrow {
+                background: rgba(244, 192, 83, 0.2);
+                transform: translateX(4px) scale(1.1);
+            }
+            .premium-game-card:active {
+                transform: translateY(1px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+    `;
+    
+    openOmniModal('Premium Arcade', gamesHtml);
+}
 // Locks the mission by saving today's date string to local storage
 function lockDailyMission() {
     const today = new Date().toDateString(); // e.g., "Fri Jul 10 2026"
