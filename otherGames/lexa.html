@@ -873,6 +873,33 @@
             color: var(--error-red);
         }
 
+        /* Dynamic Tutorial Pointer */
+        .tutorial-pointer {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            width: 32px;
+            height: 32px;
+            transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
+        }
+
+        .tutorial-pointer.active {
+            opacity: 1;
+        }
+
+        .tutorial-pointer svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.6));
+            animation: pointBounce 0.8s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pointBounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(10px); } 
+        }
+
 
 
         
@@ -997,9 +1024,13 @@
             </div>
         </div>
 
-    <footer>
-        
-    </footer>
+    <footer></footer>
+    <!-- Floating Tutorial Pointer -->
+    <div id="tutorial-pointer" class="tutorial-pointer">
+        <svg viewBox="0 0 24 24" fill="var(--accent-gold)">
+            <path d="M12 2C10.9 2 10 2.9 10 4V13.5L7.4 11.2C6.7 10.6 5.6 10.6 4.9 11.3C4.2 12 4.2 13 4.9 13.7L10.6 19.4C11.5 20.3 12.7 20.8 14 20.8H17C19.2 20.8 21 19 21 16.8V10C21 8.9 20.1 8 19 8C18.8 8 18.6 8.1 18.4 8.1V7C18.4 5.9 17.5 5 16.4 5C16.2 5 16 5.1 15.8 5.1V4C15.8 2.9 14.9 2 13.8 2H12Z" />
+        </svg>
+    </div>
 
     <script>
         // Data Definitions
@@ -1187,7 +1218,7 @@
             synthesizer.speak(utterance);
         }
 
-        function buildKeyboardMatrix() {
+function buildKeyboardMatrix() {
             virtualKeyboard.innerHTML = '';
             const rows = [
                 ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -1200,20 +1231,29 @@
                 row.forEach(char => {
                     const btn = document.createElement('button');
                     btn.className = 'key-btn';
+                    btn.dataset.key = char; // Allows the tutorial to find the key
                     
                     if (char === '⌫') {
                         btn.classList.add('key-wide');
-                        // Premium SVG for Backspace
                         btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>`;
-                        btn.addEventListener('click', () => { inputWord.value = inputWord.value.slice(0, -1); playClickTone(); inputWord.focus(); });
+                        btn.addEventListener('click', () => { 
+                            inputWord.value = inputWord.value.slice(0, -1); 
+                            playClickTone(); 
+                            inputWord.focus(); 
+                            if(currentIndex === 0) setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                        });
                     } else if (char === '↵') {
                         btn.classList.add('key-wide', 'key-submit');
-                        // Premium SVG for Enter/Submit
                         btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"></polyline><path d="M20 4v7a4 4 0 0 1-4 4H4"></path></svg>`;
                         btn.addEventListener('click', () => processTokenVerification());
                     } else {
                         btn.textContent = char;
-                        btn.addEventListener('click', () => { inputWord.value += char; playClickTone(); inputWord.focus(); });
+                        btn.addEventListener('click', () => { 
+                            inputWord.value += char; 
+                            playClickTone(); 
+                            inputWord.focus(); 
+                            if(currentIndex === 0) setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                        });
                     }
                     elementRow.appendChild(btn);
                 });
@@ -1261,7 +1301,7 @@
             btnBack.style.display = (targetScreen === screenStart) ? 'none' : 'flex';
         }
 
-        function stageAssessmentMatrix() {
+       function stageAssessmentMatrix() {
             const item = gameItems[currentIndex];
             attemptsLeft = 2;
             selectedProofreadToken = null;
@@ -1314,10 +1354,40 @@
                         selectedProofreadWord = word.replace(/[.,!?;:\"']/g, '').trim().toLowerCase();
                         correctionBadge.textContent = `Modifying element: "${selectedProofreadWord}"`;
                         inputWord.focus();
+
+                        // Update tutorial pointer dynamically when a token is clicked
+                        if (currentIndex === 0 && currentMode === 'proofread') {
+                            setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                        }
                     });
                     sentenceDisplay.appendChild(token);
                 });
                 setTimeout(() => vocalizeContext(item.sentence), 350);
+            }
+
+            // --- Level 1 Tutorial Initializer ---
+            if (currentIndex === 0) {
+                setTimeout(() => {
+                    if (currentMode === 'grammar') {
+                        const btns = document.querySelectorAll('.btn-mcq');
+                        btns.forEach(b => {
+                            if (b.textContent === item.answer) pointToElement(b);
+                        });
+                    } else if (currentMode === 'proofread') {
+                        const tokens = document.querySelectorAll('.word-token');
+                        tokens.forEach(t => {
+                            if (t.textContent.replace(/[.,!?;:"']/g, '').trim().toLowerCase() === item.errorWord.toLowerCase()) {
+                                pointToElement(t);
+                            }
+                        });
+                        tutorialExpectedWord = item.correction.toLowerCase();
+                    } else if (currentMode === 'spelling') {
+                        tutorialExpectedWord = item.word.toLowerCase();
+                        updateTypingPointer("");
+                    }
+                }, 600); // Waits for UI elements to animate in
+            } else {
+                hidePointer();
             }
         }
 
@@ -1568,6 +1638,48 @@
                     dashboardModal.classList.remove('active');
                 }
             });
+
+            let tutorialExpectedWord = "";
+
+        function pointToElement(element) {
+            if (!element) return;
+            const pointer = document.getElementById('tutorial-pointer');
+            const rect = element.getBoundingClientRect();
+            
+            // Align the tip of the finger just below the center of the target
+            pointer.style.left = `${rect.left + (rect.width / 2) - 16}px`; 
+            pointer.style.top = `${rect.top + (rect.height / 2) + 5}px`;
+            pointer.classList.add('active');
+        }
+
+        function pointToKeyboardKey(char) {
+            const target = document.querySelector(`.key-btn[data-key="${char}"]`);
+            if(target) pointToElement(target);
+        }
+
+        function hidePointer() {
+            document.getElementById('tutorial-pointer').classList.remove('active');
+        }
+
+        function updateTypingPointer(currentInput) {
+            if (currentIndex !== 0) {
+                hidePointer();
+                return;
+            }
+            if (!tutorialExpectedWord) return;
+
+            if (currentInput.length < tutorialExpectedWord.length) {
+                // Point to the next letter required
+                const nextChar = tutorialExpectedWord[currentInput.length];
+                pointToKeyboardKey(nextChar);
+            } else if (currentInput.length === tutorialExpectedWord.length) {
+                // Word is complete, point to Enter key
+                pointToKeyboardKey('↵');
+            } else {
+                // Typed too many characters, point to Delete
+                pointToKeyboardKey('⌫');
+            }
+        }
     </script>
 </body>
 </html>
