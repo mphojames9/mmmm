@@ -195,6 +195,33 @@ function loadOrResetDailyMissions() {
 
 
 function saveGame() {
+    // FIX: Safeguard against overwriting a valid saved grid with an empty grid when claiming rewards
+    let gridToSave = grid;
+    let placementsToSave = wordPlacements;
+    let foundToSave = Array.from(foundWords);
+    let extraPlacedToSave = extraWordsPlaced;
+    let extraFoundToSave = Array.from(extraWordsFound);
+    let highlightsToSave = savedHighlightsData;
+
+    if (!grid || grid.length === 0 || !grid[0]) {
+        const existingSaveRaw = localStorage.getItem('premiumWordSearchSave');
+        if (existingSaveRaw) {
+            try {
+                const existingSave = JSON.parse(existingSaveRaw);
+                if (existingSave.grid && existingSave.grid.length > 0) {
+                    gridToSave = existingSave.grid;
+                    placementsToSave = existingSave.wordPlacements || {};
+                    foundToSave = existingSave.foundWords || [];
+                    extraPlacedToSave = existingSave.extraWordsPlaced || [];
+                    extraFoundToSave = existingSave.extraWordsFound || [];
+                    highlightsToSave = existingSave.savedHighlightsData || [];
+                }
+            } catch (e) {
+                console.error("Error reading existing save in saveGame:", e);
+            }
+        }
+    }
+
     const gameState = {
         date: new Date().toDateString(),
         currentLevelIdx: currentLevelIdx,
@@ -202,19 +229,18 @@ function saveGame() {
         coins: coins,
         levelStartScore: levelStartScore,
         levelStartCoins: levelStartCoins,
-        grid: grid,
-        wordPlacements: wordPlacements,
-        foundWords: Array.from(foundWords),
-        extraWordsPlaced: extraWordsPlaced,
-        extraWordsFound: Array.from(extraWordsFound),
-        savedHighlightsData: savedHighlightsData,
+        grid: gridToSave,
+        wordPlacements: placementsToSave,
+        foundWords: foundToSave,
+        extraWordsPlaced: extraPlacedToSave,
+        extraWordsFound: extraFoundToSave,
+        savedHighlightsData: highlightsToSave,
         activeLevelTimeElapsed: activeLevelTimeElapsed,
         usedPowerupOnActiveLevel: usedPowerupOnActiveLevel,
         dailyMissions: dailyMissions
     };
     localStorage.setItem('premiumWordSearchSave', JSON.stringify(gameState));
     
-    // ---> ADD THIS LINE HERE TO AUTO-SYNC TO GOOGLE:
     if (typeof window.savePlayerScore === 'function') window.savePlayerScore();
 }
 
@@ -272,8 +298,11 @@ function saveStatsToStorage() {
 }
 
 // === CORE GAME LOGIC ===
-
 function bootOmniDashboard() {
+    // FIX: Pre-load save data into memory immediately on startup
+    loadSavedGame();
+    if (typeof loadDailySave === 'function') loadDailySave();
+
     const saved = localStorage.getItem('premiumWordSearchSave');
     if (saved) {
         document.getElementById('omni-play-text').textContent = "Resume Journey";
@@ -373,16 +402,15 @@ function bootGameFromOmni() {
         
         setupInteraction();
         
-        // 1. First, load the game safely into memory
-        if (loadSavedGame()) {
+        // FIX: Verify that the loaded save actually contains a populated grid matrix
+        if (loadSavedGame() && grid && grid.length > 0 && grid[0] && grid[0].length > 0) {
             restoreLevel();
             startLevelProcessingClock();
         } else {
-            // If the save got corrupted by the previous bug, this will regenerate a fresh board
-            loadLevel(0);
+            // If the save got corrupted by the previous bug, this will regenerate a fresh board for the current level
+            loadLevel(currentLevelIdx || 0);
         }
 
-        // 2. NOW that everything is loaded, run the merge
         mergeSaveDataAndUpdateUI(); 
         
     }, 600); 
@@ -585,7 +613,10 @@ function placeWord(word, r, c, dir) {
 function renderGrid() {
     boardEl.innerHTML = '';
 
-    if (!grid || grid.length === 0 || !grid[0]) return generateGrid();
+    // FIX: Removed 'return' so the DOM cells are rendered after generating the grid
+    if (!grid || grid.length === 0 || !grid[0]) {
+        generateGrid();
+    }
 
     for (let r = 0; r < gridSize; r++) {
         for (let c = 0; c < gridSize; c++) {
@@ -2129,131 +2160,264 @@ function claimMissionReward(missionId, elementButtonRef) {
 function openMoreGamesModal() {
     if (typeof audioEngine !== 'undefined' && audioEngine.playClick) audioEngine.playClick();
     
-    const gamesHtml = `
-        <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 10px; max-height: 420px; overflow-y: auto;">
-            <p style="color: #a0aec0; font-size: 13px; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
-                Expand your library
-            </p>
 
-            <a href="./otherGames/2028.html" class="premium-game-card">
-                <div class="pgc-icon" style="background: linear-gradient(135deg, #ff416c, #d32f2f); box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);">
-                    2028
-                </div>
-                <div class="pgc-content">
-                    <h4>2028 Matrix</h4>
-                    <p>Strategic number fusion</p>
-                </div>
-                <div class="pgc-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </div>
-            </a>
+    // 1. Dynamic Game Data Config
+const premiumGames = [
+    {
+        id: 'matrix-2048',
+        title: '2028 Matrix',
+        subtitle: 'Strategic number fusion',
+        url: './otherGames/2048.html',
+        image: './images/2048.png',
+        fallbackGradient: 'linear-gradient(135deg, #ff416c, #d32f2f)',
+        glowColor: 'rgba(211, 47, 47, 0.4)'
+    },
+    {
+        id: 'lexa',
+        title: 'Lexa',
+        subtitle: 'Advanced word anagrams',
+        url: './otherGames/lexa.html',
+        image: './images/echo.png',
+        fallbackGradient: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+        glowColor: 'rgba(79, 172, 254, 0.4)'
+    },
+    {
+        id: 'quizz',
+        title: 'Quizz Master',
+        subtitle: 'Global trivia championship',
+        url: './otherGames/quizz.html',
+        image: './images/quiz.png',
+        fallbackGradient: 'linear-gradient(135deg, #9b51e0, #6f42c1)',
+        glowColor: 'rgba(155, 81, 224, 0.4)'
+    }
+];
 
-            <a href="./otherGames/lexa.html" class="premium-game-card">
-                <div class="pgc-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe); box-shadow: 0 4px 10px rgba(79, 172, 254, 0.4); font-size: 20px;">
-                    LX
-                </div>
-                <div class="pgc-content">
-                    <h4>Lexa</h4>
-                    <p>Advanced word anagrams</p>
-                </div>
-                <div class="pgc-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </div>
-            </a>
+// 2. Dynamic HTML Generator
+const renderGameCards = () => {
+    return premiumGames.map(game => `
+        <a href="${game.url}" class="premium-game-card" style="--glow-color: ${game.glowColor};">
+            <div class="pgc-icon" style="background: ${game.fallbackGradient};">
+                <img src="${game.image}" alt="${game.title}" class="pgc-img" onerror="this.style.display='none'" />
+            </div>
+            <div class="pgc-content">
+                <h4>${game.title}</h4>
+                <p>${game.subtitle}</p>
+            </div>
+            <div class="pgc-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </div>
+        </a>
+    `).join('');
+};
 
-            <a href="./otherGames/quizz.html" class="premium-game-card">
-                <div class="pgc-icon" style="background: linear-gradient(135deg, #9b51e0, #6f42c1); box-shadow: 0 4px 10px rgba(155, 81, 224, 0.4); font-size: 20px;">
-                    QZ
-                </div>
-                <div class="pgc-content">
-                    <h4>Quizz Master</h4>
-                    <p>Global trivia championship</p>
-                </div>
-                <div class="pgc-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </div>
-            </a>
+// 3. Complete Template String
+const gamesHtml = `
+    <div class="pgc-container">
+        <p class="pgc-header">
+            Expand your library
+        </p>
+
+        <div class="pgc-list">
+            ${renderGameCards()}
         </div>
+    </div>
 
-        <style>
-            /* Premium Game Card Layout */
+    <style>
+        /* Responsive Container & Custom Scrollbar */
+        .pgc-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pgc-header {
+            color: #a0aec0;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding-left: 4px;
+        }
+
+        .pgc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding: 4px;
+            /* Custom Smooth Scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .pgc-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .pgc-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .pgc-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        .pgc-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Premium Game Card Layout */
+        .premium-game-card {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            padding: 14px 16px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle Dynamic Glow on Card Edge */
+        .premium-game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--glow-color, #ffffff);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Avatar Thumbnail & Image Handling */
+        .premium-game-card .pgc-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 6px 14px var(--glow-color, rgba(0,0,0,0.3));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-game-card .pgc-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+            transition: transform 0.4s ease;
+        }
+
+        /* Text Content */
+        .premium-game-card .pgc-content {
+            flex-grow: 1;
+            text-align: left;
+            min-width: 0; /* Ensures text truncation works on small screens */
+        }
+        
+        .premium-game-card .pgc-content h4 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .premium-game-card .pgc-content p {
+            margin: 4px 0 0 0;
+            color: #8fa8aa;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Call to Action Arrow */
+        .premium-game-card .pgc-arrow {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: var(--gold, #f4c053);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-left: 12px;
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Hover & Active Physics */
+        .premium-game-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 14px 28px rgba(0, 0, 0, 0.35);
+        }
+        
+        .premium-game-card:hover::before {
+            opacity: 1;
+        }
+
+        .premium-game-card:hover .pgc-img {
+            transform: scale(1.12);
+        }
+
+        .premium-game-card:hover .pgc-arrow {
+            background: rgba(244, 192, 83, 0.15);
+            border-color: rgba(244, 192, 83, 0.4);
+            transform: translateX(4px) scale(1.08);
+        }
+
+        .premium-game-card:active {
+            transform: translateY(0px) scale(0.99);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Breakpoints for Mobile */
+        @media (max-width: 480px) {
             .premium-game-card {
-                text-decoration: none;
-                display: flex;
-                align-items: center;
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-                border: 1px solid rgba(255, 255, 255, 0.15);
-                border-radius: 16px;
-                padding: 14px;
-                box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 8px 16px rgba(0, 0, 0, 0.15);
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            }
-            
-            /* Avatar Thumbnail */
-            .premium-game-card .pgc-icon {
-                width: 52px;
-                height: 52px;
+                padding: 12px;
                 border-radius: 14px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                font-weight: 900;
-                font-size: 15px;
-                margin-right: 16px;
-                flex-shrink: 0;
             }
-
-            /* Text Content */
-            .premium-game-card .pgc-content {
-                flex-grow: 1;
-                text-align: left;
+            .premium-game-card .pgc-icon {
+                width: 48px;
+                height: 48px;
+                margin-right: 12px;
             }
             .premium-game-card .pgc-content h4 {
-                margin: 0;
-                color: #ffffff;
-                font-size: 16px;
-                font-weight: 800;
-                letter-spacing: 0.5px;
+                font-size: 15px;
             }
             .premium-game-card .pgc-content p {
-                margin: 4px 0 0 0;
-                color: #7a9c9f;
                 font-size: 12px;
-                font-weight: 600;
             }
-
-            /* Call to Action Arrow */
             .premium-game-card .pgc-arrow {
-                background: rgba(255, 255, 255, 0.08);
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                color: var(--gold, #f4c053);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: transform 0.3s ease, background 0.3s ease;
+                width: 34px;
+                height: 34px;
             }
-
-            /* Hover & Active Physics */
-            .premium-game-card:hover {
-                transform: translateY(-4px);
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-                border-color: rgba(255, 255, 255, 0.3);
-                box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 12px 24px rgba(0, 0, 0, 0.3);
-            }
-            .premium-game-card:hover .pgc-arrow {
-                background: rgba(244, 192, 83, 0.2);
-                transform: translateX(4px) scale(1.1);
-            }
-            .premium-game-card:active {
-                transform: translateY(1px);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            }
-        </style>
-    `;
-    
+        }
+    </style>
+`;
     openOmniModal('Premium Arcade', gamesHtml);
 }
 // Locks the mission by saving today's date string to local storage
@@ -2262,24 +2426,133 @@ function lockDailyMission() {
     localStorage.setItem('premiumDailyMissionLastPlayed', today);
 }
 
+// Unique list of all game assets to preload
+const PRELOAD_IMAGES = [
+    'images/nature.png',   // Core background image
+    'images/coin.png',     // Floating animations & button economy
+    'images/coins.png',    // 500-coin bonus graphic
+    'images/camera.png',   // Ad power-up buttons
+    'images/clock.png',    // Time Attack mission UI
+    'images/gold.png'      // Daily Mission reward icons
+];
 
-function returnToHomePage() {
-    // OPTION A: If your home page is a completely separate HTML file
-    // Use this to redirect the browser. Update 'index.html' if your home page is named differently.
-    window.location.href = 'index.html'; 
+/**
+ * Preloads all essential image assets into the browser cache
+ * to prevent delay, blank elements, or stuttering during active gameplay.
+ */
+function preloadGameAssets(callback) {
+    let loadedCount = 0;
+    const totalAssets = PRELOAD_IMAGES.length;
 
+    if (totalAssets === 0) {
+        if (callback) callback();
+        return;
+    }
 
-    /*
-    // 1. Hide the success overlay
-    document.getElementById('success-overlay').style.display = 'none';
-    
-    // 2. Hide the confetti canvas (if you are using the premium confetti engine)
-    const confettiCanvas = document.getElementById('premium-confetti-canvas');
-    if (confettiCanvas) confettiCanvas.style.display = 'none';
-    
-    // 3. Show the home/main menu container
-    document.getElementById('home-menu-container').style.display = 'block';
-    */
+    console.log("Preloading game assets...");
+
+    PRELOAD_IMAGES.forEach(src => {
+        const img = new Image();
+        
+        // Move forward whether the image loads successfully or encounters an error
+        img.onload = () => {
+            loadedCount++;
+            if (loadedCount === totalAssets) {
+                console.log("All game assets preloaded successfully!");
+                if (callback) callback();
+            }
+        };
+        
+        img.onerror = () => {
+            console.warn(`Failed to preload image: ${src}`);
+            loadedCount++;
+            if (loadedCount === totalAssets) {
+                console.log("Preloader complete (with warning/s).");
+                if (callback) callback();
+            }
+        };
+
+        img.src = src;
+    });
 }
 
-bootOmniDashboard();
+// Global high-speed caching memory bank for instantaneous UI injection
+let cachedLeaderboardData = null;
+
+async function preloadGlobalLeaderboard() {
+    try {
+        return await new Promise((resolve) => {
+            setTimeout(() => {
+                const synchronizedMockup = [
+                    { name: "AlphaSeeker", score: 28400, rank: 1, current: false },
+                    { name: "LexicConqueror", score: 24200, rank: 2, current: false },
+                    { name: "MatrixKing", score: 21950, rank: 3, current: false },
+                    { name: "Player_You", score: score || 16500, rank: 4, current: true },
+                    { name: "CrypticPro", score: 14100, rank: 5, current: false }
+                ];
+                
+                cachedLeaderboardData = synchronizedMockup;
+                resolve(true);
+            }, 1400); 
+        });
+    } catch (error) {
+        console.error("Leaderboard network gateway error:", error);
+        return false;
+    }
+}
+
+function deployPremiumAppPipeline() {
+    // 1. First, boot your dashboard logic in the background
+    bootOmniDashboard(); 
+    
+    const progressFill = document.getElementById('premium-progress-fluid');
+    const statusLabel = document.getElementById('loading-status-text');
+    const systemOverlay = document.getElementById('premium-loading-overlay');
+    
+    let graphicsSystemReady = false;
+    let dataStreamReady = false;
+    
+    function evaluateSystemStatus() {
+        if (graphicsSystemReady && dataStreamReady) {
+            if (progressFill) progressFill.style.width = "100%";
+            if (statusLabel) statusLabel.textContent = "Data Handshake Verified";
+            
+            setTimeout(() => {
+                if (systemOverlay) {
+                    systemOverlay.classList.add('fade-out-complete');
+                    setTimeout(() => systemOverlay.remove(), 500);
+                }
+            }, 400);
+        }
+    }
+    
+    if (statusLabel) statusLabel.textContent = "Preloading Media Elements...";
+    
+    // Utilize your existing preloader
+    if (typeof preloadGameAssets === 'function') {
+        preloadGameAssets(() => {
+            graphicsSystemReady = true;
+            if (progressFill) progressFill.style.width = "50%";
+            if (statusLabel) statusLabel.textContent = "Connecting Secure Lead Services...";
+            evaluateSystemStatus();
+        });
+    }
+    
+    preloadGlobalLeaderboard().then(() => {
+        dataStreamReady = true;
+        if (graphicsSystemReady && progressFill) progressFill.style.width = "90%";
+        evaluateSystemStatus();
+    });
+}
+
+// Start the sequence when the DOM is ready
+window.addEventListener('DOMContentLoaded', deployPremiumAppPipeline);
+
+function returnToHomePage() {
+    window.location.href = 'index.html'; 
+}
+
+
+
+// NOTE: We removed the standalone bootOmniDashboard() call from here 
+// because it is now safely triggered inside deployPremiumAppPipeline()

@@ -1208,14 +1208,56 @@
             osc.start(); osc.stop(now + 0.28);
         }
 
+// --- ADVANCED VOCAL SYNTHESIS ENGINE ---
+        let availableVoices = [];
+        let preferredVoice = null;
+
+        // Browsers load voices asynchronously. This captures them as soon as they are ready.
+        function loadPremiumVoices() {
+            availableVoices = synthesizer.getVoices();
+            
+            // Prioritize ultra-realistic voices based on device ecosystem
+            preferredVoice = 
+                availableVoices.find(v => v.name.includes("Neural") && v.lang.startsWith("en")) || // Edge/Windows high-fidelity
+                availableVoices.find(v => (v.name.includes("Premium") || v.name.includes("Enhanced")) && v.lang.startsWith("en")) || // Apple high-fidelity
+                availableVoices.find(v => v.name.includes("Google UK English Female") || v.name.includes("Google US English")) || // Google standard
+                availableVoices.find(v => v.lang === "en-GB" || v.lang === "en-US"); // Generic fallback
+        }
+
+        // Attach listener to capture voices when the API is ready
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadPremiumVoices;
+        }
+
         function vocalizeContext(text, speed = 0.85) {
-            if (synthesizer.speaking) synthesizer.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voices = synthesizer.getVoices();
-            const preferredVoice = voices.find(v => v.name.includes("Google") || v.lang.startsWith("en-GB"));
-            if (preferredVoice) utterance.voice = preferredVoice;
+            if (!text) return;
+
+            // Cancel overlapping speech to maintain UI responsiveness
+            if (synthesizer.speaking) {
+                synthesizer.cancel();
+            }
+
+            // Sanitize text: Convert underscores to a natural pause or the word "blank"
+            const sanitizedText = text.replace(/_+/g, "blank").trim();
+
+            const utterance = new SpeechSynthesisUtterance(sanitizedText);
+            
+            // Fallback in case voices didn't load in time
+            if (availableVoices.length === 0) loadPremiumVoices();
+            
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+
+            // Premium acoustic adjustments
             utterance.rate = speed;
-            synthesizer.speak(utterance);
+            utterance.pitch = 0.92; // Slightly lowered pitch for a richer, more resonant and professional tone
+            utterance.volume = 1.0; 
+
+            // Add a micro-delay to allow the DOM to render visual cues before audio triggers
+            setTimeout(() => {
+                synthesizer.speak(utterance);
+            }, 50);
         }
 
 function buildKeyboardMatrix() {
@@ -1346,7 +1388,7 @@ function buildKeyboardMatrix() {
                     const token = document.createElement('span');
                     token.className = 'word-token';
                     token.textContent = word + " ";
-                    token.addEventListener('click', () => {
+                   token.addEventListener('click', () => {
                         playClickTone();
                         document.querySelectorAll('.word-token').forEach(t => t.className = 'word-token');
                         token.className = 'word-token selected-error';
@@ -1355,9 +1397,20 @@ function buildKeyboardMatrix() {
                         correctionBadge.textContent = `Modifying element: "${selectedProofreadWord}"`;
                         inputWord.focus();
 
-                        // Update tutorial pointer dynamically when a token is clicked
+                        // SMART CORRECTION: Verify tutorial selection
                         if (currentIndex === 0 && currentMode === 'proofread') {
-                            setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                            if (selectedProofreadWord !== item.errorWord.toLowerCase()) {
+                                // Clicked the wrong token. Point them to the correct one.
+                                const tokens = document.querySelectorAll('.word-token');
+                                tokens.forEach(t => {
+                                    if (t.textContent.replace(/[.,!?;:"']/g, '').trim().toLowerCase() === item.errorWord.toLowerCase()) {
+                                        pointToElement(t);
+                                    }
+                                });
+                            } else {
+                                // Clicked the right token. Guide their typing.
+                                setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                            }
                         }
                     });
                     sentenceDisplay.appendChild(token);
@@ -1391,15 +1444,27 @@ function buildKeyboardMatrix() {
             }
         }
 
-        function processSyntaxOption(element, choice) {
+       function processSyntaxOption(element, choice) {
             if (element.disabled) return;
             const correctAnswer = gameItems[currentIndex].answer;
+            
             if (choice === correctAnswer) {
                 element.classList.add('correct');
                 executeSuccessState(correctAnswer);
+                hidePointer(); // Hide pointer on success
             } else {
                 element.classList.add('wrong');
                 executeFailureState(element);
+                
+                // SMART CORRECTION: Point to the correct button if they fail on level 1
+                if (currentIndex === 0) {
+                    const btns = document.querySelectorAll('.btn-mcq');
+                    btns.forEach(b => {
+                        if (b.textContent === correctAnswer) {
+                            setTimeout(() => pointToElement(b), 450); // Wait for the shake animation to finish
+                        }
+                    });
+                }
             }
         }
 
@@ -1589,10 +1654,12 @@ function buildKeyboardMatrix() {
         window.addEventListener('DOMContentLoaded', () => {
             initAnalyticsProfile();
             buildKeyboardMatrix();
+            loadPremiumVoices();
 
             btnBack.addEventListener('click', () => {
                 if (synthesizer.speaking) synthesizer.cancel();
                 playClickTone();
+                hidePointer();
                 showScreen(screenStart);
             });
 
@@ -1639,7 +1706,6 @@ function buildKeyboardMatrix() {
                 }
             });
 
-            let tutorialExpectedWord = "";
 
         function pointToElement(element) {
             if (!element) return;
@@ -1661,6 +1727,8 @@ function buildKeyboardMatrix() {
             document.getElementById('tutorial-pointer').classList.remove('active');
         }
 
+        let tutorialExpectedWord = "";
+
         function updateTypingPointer(currentInput) {
             if (currentIndex !== 0) {
                 hidePointer();
@@ -1668,16 +1736,17 @@ function buildKeyboardMatrix() {
             }
             if (!tutorialExpectedWord) return;
 
-            if (currentInput.length < tutorialExpectedWord.length) {
-                // Point to the next letter required
+            // SMART CORRECTION: If the current input is NOT a valid prefix of the expected word
+            if (!tutorialExpectedWord.startsWith(currentInput)) {
+                // Typo detected! Point to the Backspace key
+                pointToKeyboardKey('⌫');
+            } else if (currentInput.length < tutorialExpectedWord.length) {
+                // Input is correct so far, point to the next letter required
                 const nextChar = tutorialExpectedWord[currentInput.length];
                 pointToKeyboardKey(nextChar);
             } else if (currentInput.length === tutorialExpectedWord.length) {
-                // Word is complete, point to Enter key
+                // Word is complete and correct, point to the Enter key
                 pointToKeyboardKey('↵');
-            } else {
-                // Typed too many characters, point to Delete
-                pointToKeyboardKey('⌫');
             }
         }
     </script>

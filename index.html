@@ -1013,6 +1013,95 @@
         flex-direction: column;
     }
 }
+
+/* ==========================================
+   PREMIUM OVERLAY ENGINE STYLES
+   ========================================== */
+#premium-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #0a111e 0%, #121721 100%);
+    z-index: 100000; /* Positions comfortably on top of omni overlays */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.5s;
+}
+
+/* Seamless exit animation */
+#premium-loading-overlay.fade-out-complete {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content-core {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 290px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Minimalist Geometric Gyro Spinner */
+.premium-spinner-gyro {
+    width: 64px;
+    height: 64px;
+    border: 2px solid rgba(244, 192, 83, 0.08);
+    border-top: 2px solid var(--gold, #f4c053);
+    border-radius: 50%;
+    position: relative;
+    animation: premium-gyro-spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    margin-bottom: 28px;
+    filter: drop-shadow(0 0 8px rgba(244, 192, 83, 0.25));
+}
+
+.luminescent-core {
+    position: absolute;
+    top: 20%; left: 20%; width: 60%; height: 60%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 192, 83, 0.12) 0%, transparent 70%);
+}
+
+@keyframes premium-gyro-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.premium-brand-text {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    margin-bottom: 18px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* Crisp Slim Loading Bar */
+.loading-track-vault {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+#premium-progress-fluid {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold, #f4c053) 0%, #feb47b 100%);
+    box-shadow: 0 0 6px var(--gold, #f4c053);
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
     </style>
 </head>
 <body>
@@ -1288,6 +1377,15 @@
     </div>
 </div>
 
+<!-- Premium Studio Startup Engine Layer -->
+<div id="premium-loading-overlay">
+    <div class="loader-content-core">
+        <div class="premium-spinner-gyro">
+            <div class="luminescent-core"></div>
+        </div>
+    </div>
+</div>
+
 <script src="sounds.js"></script>
 <script src="app.js"></script>
 <script type="module">
@@ -1297,7 +1395,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  signOut
+  signOut,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import {
   getFirestore,
@@ -1327,6 +1426,16 @@ const db = getFirestore(app);
 
 window.currentUser = null;
 
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in. Restore their session globally.
+    window.currentUser = user;
+    console.log("Session restored for:", window.currentUser.displayName);
+  } else {
+    // User is completely logged out.
+    window.currentUser = null;
+  }
+});
 // 1. LOGIN FUNCTION
 window.googleLogin = async function () {
   try {
@@ -1378,125 +1487,324 @@ window.savePlayerScore = async function () {
   }
 };
 
-// 4. FETCH STATS & RENDER LEADERBOARD MODAL
+// 4. FETCH STATS & RENDER LEADERBOARD MODAL (RESPONSIVE & FLUID)
+// 4. FETCH STATS & RENDER LEADERBOARD MODAL (RESPONSIVE, FLUID & ULTRA-PREMIUM)
 window.openGoogleLeaderboardModal = async function () {
   if (typeof audioEngine !== 'undefined' && audioEngine.playClick) audioEngine.playClick();
 
-openOmniModal(
-  // 1. Premium Title with Custom Image
-  `<div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; letter-spacing: 0.5px;">
-    <img src="./images/cup.png" alt="Cup" style="width: 28px; height: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));" />
-    Global Cloud Leaderboard
-   </div>`,
-  
-  // 2. Ultra-Modern Orbital Loading State
-  `
-  <style>
-    @keyframes orbital-spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes core-pulse {
-      0%, 100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-      50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px rgba(236, 72, 153, 0.6); }
-    }
-    .premium-spinner {
-      position: relative;
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 28px auto;
-    }
-    /* The outer orbiting gradient ring */
-    .premium-spinner-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: conic-gradient(from 0deg, transparent, transparent 30%, #4f46e5 80%, #ec4899 100%);
-      animation: orbital-spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-      mask-image: radial-gradient(transparent 58%, black 60%);
-      -webkit-mask-image: radial-gradient(transparent 58%, black 60%);
-    }
-    /* The inner pulsing core */
-    .premium-spinner-core {
-      position: absolute;
-      inset: 18px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #4f46e5, #ec4899);
-      animation: core-pulse 2s ease-in-out infinite;
-    }
-    .premium-text {
-      font-weight: 700;
-      font-size: 1.15rem;
-      background: linear-gradient(90deg, #a5b4fc, #f9a8d4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 0.5px;
-    }
-  </style>
-
-  <div style="text-align: center; padding: 60px 20px; font-family: system-ui, -apple-system, sans-serif;">
-    <div class="premium-spinner">
-      <div class="premium-spinner-ring"></div>
-      <div class="premium-spinner-core"></div>
+  // Premium Loading State
+  openOmniModal(
+    `<div style="display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 800; letter-spacing: 1.5px; color: #2d3748; text-transform: uppercase; font-size: clamp(14px, 4vw, 18px);">
+      <img src="./images/cup.png" alt="Cup" style="width: 26px; height: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));" onerror="this.style.display='none'" />
+      Global Leaderboard
+     </div>`,
+    `
+    <style>
+      @keyframes elite-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      @keyframes elite-pulse {
+        0%, 100% { transform: scale(0.98); opacity: 0.85; box-shadow: 0 4px 12px rgba(244, 192, 83, 0.3); }
+        50% { transform: scale(1.04); opacity: 1; box-shadow: 0 8px 24px rgba(244, 192, 83, 0.6); }
+      }
+      .elite-spinner { position: relative; width: 70px; height: 70px; margin: 0 auto 32px auto; }
+      .elite-spinner-track { position: absolute; inset: 0; border-radius: 50%; border: 3px solid rgba(226, 232, 240, 0.8); }
+      .elite-spinner-runner { position: absolute; inset: -1px; border-radius: 50%; border: 4px solid transparent; border-top-color: #f4c053; border-right-color: #dca353; animation: elite-spin 0.85s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+      .elite-spinner-core { position: absolute; inset: 18px; border-radius: 50%; background: linear-gradient(135deg, #f4c053, #dca353); animation: elite-pulse 1.5s ease-in-out infinite; }
+      .elite-text { font-weight: 800; font-size: 1.1rem; color: #3d5a5c; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+      .elite-subtext { font-weight: 600; font-size: 0.85rem; color: #7a9c9f; }
+    </style>
+    <div style="text-align: center; padding: 40px 16px; font-family: 'Nunito', system-ui, sans-serif;">
+      <div class="elite-spinner">
+        <div class="elite-spinner-track"></div><div class="elite-spinner-runner"></div><div class="elite-spinner-core"></div>
+      </div>
+      <div class="elite-text">Synchronizing</div>
+      <div class="elite-subtext">Securely fetching live rankings...</div>
     </div>
-    <p class="premium-text">Synchronizing Real-Time Standings...</p>
-  </div>
-  `
-);
+    `
+  );
 
   try {
     const scoresRef = collection(db, "leaderboard");
     const q = query(scoresRef, orderBy("score", "desc"), limit(10));
     const querySnapshot = await getDocs(q);
 
+    // Build the injected HTML/CSS with fluid clamp() and zoom scaling
     let html = `
-      <div class="premium-dashboard-wrapper" style="padding-top: 10px; text-align: left;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <div class="premium-section-header" style="margin: 0;">Top 10 Seekers</div>
+      <style>
+        .leaderboard-premium-wrapper *, .leaderboard-premium-wrapper *::before, .leaderboard-premium-wrapper *::after {
+          box-sizing: border-box;
+        }
+
+        @keyframes lb-shine {
+          0% { left: -100%; }
+          20%, 100% { left: 100%; }
+        }
+
+        .leaderboard-premium-wrapper {
+          background: linear-gradient(to bottom, #09254a 0%, #1e5799 100%);
+          border-radius: clamp(18px, 4vw, 28px);
+          padding: clamp(10px, 3vw, 16px);
+          font-family: 'Nunito', system-ui, sans-serif;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+          max-width: 500px;
+          margin: 0 auto;
+          transition: transform 0.2s ease, zoom 0.2s ease;
+        }
+
+        /* ZOOM IN/OUT FOR PERFECT FIT ON SMALL METRICS */
+        @media (max-width: 420px) {
+          .leaderboard-premium-wrapper { zoom: 0.90; }
+        }
+        @media (max-width: 360px) {
+          .leaderboard-premium-wrapper { zoom: 0.80; }
+        }
+        
+        .leaderboard-title {
+          text-align: center;
+          font-size: clamp(24px, 7vw, 36px);
+          font-weight: 900;
+          color: #ffffff;
+          margin: 10px 0 18px 0;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          text-shadow: 0 5px 10px rgba(0,0,0,0.5), 0 -3px 0 #3b82f6;
+          -webkit-text-stroke: 1px #1e3a8a;
+          line-height: 1.1;
+        }
+
+        .leaderboard-inner-card {
+          background: #f8fafc;
+          border-radius: clamp(14px, 3vw, 20px);
+          border: clamp(3px, 1vw, 5px) solid #3b82f6;
+          padding: clamp(8px, 2.5vw, 12px);
+          box-shadow: inset 0 6px 12px rgba(0,0,0,0.1);
+          max-height: 50vh;
+          overflow-y: auto;
+          width: 100%;
+        }
+
+        .lb-row {
+          display: flex;
+          align-items: center;
+          padding: clamp(8px, 2vw, 10px) clamp(8px, 2.5vw, 14px);
+          border-radius: clamp(12px, 2.5vw, 16px);
+          margin-bottom: 10px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+          border: 2px solid rgba(255,255,255,0.8);
+          position: relative;
+          gap: clamp(8px, 2.5vw, 14px);
+          width: 100%;
+        }
+        
+        /* Highlight active user */
+        .lb-row.is-me {
+          box-shadow: 0 0 0 2px #ff416c, 0 8px 16px rgba(255,65,108,0.2);
+        }
+
+        /* Rank-specific Gradients */
+        .lb-rank-1 { background: linear-gradient(180deg, #fff3b0 0%, #ffc107 100%); border-color: #ffca28; }
+        .lb-rank-2 { background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%); border-color: #cbd5e1; }
+        .lb-rank-3 { background: linear-gradient(180deg, #ffcc80 0%, #f57c00 100%); border-color: #fb8c00; }
+        .lb-rank-other { background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border-color: #e2e8f0; }
+
+        /* Badges */
+        .lb-badge {
+          width: clamp(34px, 9vw, 46px); 
+          height: clamp(34px, 9vw, 46px);
+          display: flex; justify-content: center; align-items: center;
+          font-size: clamp(16px, 4.5vw, 22px); 
+          font-weight: 900;
+          color: #ffffff;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+          flex-shrink: 0;
+        }
+        .lb-rank-1 .lb-badge { background: linear-gradient(135deg, #ffeb3b, #fbc02d); border-radius: 50%; border: 3px solid #fff9c4; box-shadow: 0 4px 8px rgba(251, 192, 45, 0.4); }
+        .lb-rank-2 .lb-badge { background: linear-gradient(135deg, #e0e0e0, #9e9e9e); border-radius: 50%; border: 3px solid #f5f5f5; box-shadow: 0 4px 8px rgba(158, 158, 158, 0.4); }
+        .lb-rank-3 .lb-badge { background: linear-gradient(135deg, #ff9800, #e65100); border-radius: 50%; border: 3px solid #ffe0b2; box-shadow: 0 4px 8px rgba(230, 81, 0, 0.4); }
+        .lb-rank-other .lb-badge { background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; border: 2px solid #93c5fd; box-shadow: 0 4px 6px rgba(29, 78, 216, 0.3); }
+
+        /* Avatars */
+        .lb-avatar {
+          width: clamp(40px, 10vw, 54px); 
+          height: clamp(40px, 10vw, 54px);
+          border-radius: 50%;
+          border: 3px solid #3b82f6;
+          object-fit: cover;
+          background: #e2e8f0;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+          flex-shrink: 0;
+        }
+        .lb-rank-1 .lb-avatar { border-color: #fbc02d; }
+        .lb-rank-2 .lb-avatar { border-color: #3b82f6; }
+        .lb-rank-3 .lb-avatar { border-color: #e65100; }
+
+        /* Text Details */
+        .lb-details {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          min-width: 0;
+        }
+        .lb-name {
+          font-size: clamp(15px, 4vw, 19px);
+          font-weight: 900;
+          color: #0f172a;
+          line-height: 1.1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .lb-words {
+          font-size: clamp(10px, 2.5vw, 11px);
+          font-weight: 800;
+          color: #64748b;
+          margin-top: 4px;
+          text-transform: uppercase;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        /* Scores */
+        .lb-score-box {
+          display: flex;
+          align-items: center;
+          gap: clamp(4px, 1.5vw, 8px);
+          flex-shrink: 0;
+        }
+        .lb-score-text {
+          font-size: clamp(18px, 5vw, 24px);
+          font-weight: 900;
+          color: #0f172a;
+        }
+        .lb-trophy {
+          font-size: clamp(18px, 5vw, 24px);
+          filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+        }
+        .lb-rank-2 .lb-trophy { filter: grayscale(100%) drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+
+        /* Bottom Banner */
+        .lb-footer-ribbon {
+          background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+          border-radius: clamp(10px, 2.5vw, 12px);
+          margin-top: 14px;
+          padding: clamp(12px, 3vw, 16px);
+          text-align: center;
+          color: white;
+          font-weight: 900;
+          font-size: clamp(13px, 3.5vw, 17px);
+          box-shadow: 0 6px 0 #7f1d1d, 0 10px 15px rgba(0,0,0,0.4);
+          border: 2px solid #fca5a5;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          line-height: 1.2;
+        }
+        
+        /* ULTRA-PREMIUM AUTH BUTTON SUITE */
+        .lb-auth-btn {
+          position: relative;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 100%);
+          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          padding: 8px 16px;
+          border-radius: 30px;
+          font-size: clamp(11px, 3vw, 13px);
+          font-weight: 800;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+          max-width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+          z-index: 1;
+        }
+
+        /* Glass Shine Sweep Effect */
+        .lb-auth-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+          transform: skewX(-25deg);
+          animation: lb-shine 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: -1;
+        }
+
+        .lb-auth-btn:hover {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.15) 100%);
+          border-color: rgba(255, 255, 255, 0.8);
+          transform: translateY(-2px) scale(1.03);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.8);
+        }
+
+        .lb-auth-btn:active {
+          transform: translateY(1px) scale(0.98);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+      </style>
+
+      <div class="leaderboard-premium-wrapper">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: -5px; position: relative; z-index: 10;">
           ${window.currentUser 
-            ? `<button onclick="googleLogout()" style="background: rgba(255,65,108,0.2); border: 1px solid #ff416c; color: #ff416c; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer;">Sign Out (${window.currentUser.displayName.split(' ')[0]})</button>` 
-            : `<button onclick="googleLogin()" style="background: linear-gradient(135deg, #4facfe, #00f2fe); border: none; color: white; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(79,172,254,0.4);">🚀 Sign in with Google to Rank</button>`
+            ? `<button class="lb-auth-btn" onclick="googleLogout()">
+                <span style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; display: inline-block; flex-shrink: 0;"></span>
+                <span>Sign Out (${window.currentUser.displayName.split(' ')[0]})</span>
+               </button>`
+            : `<button class="lb-auth-btn" onclick="googleLogin()">
+                <svg width="16" height="16" viewBox="0 0 48 48" style="flex-shrink:0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                <span>Sign In</span>
+               </button>`
           }
         </div>
-        <div style="display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 4px;">
+        
+        <div class="leaderboard-title">Leaderboard</div>
+        
+        <div class="leaderboard-inner-card">
     `;
 
     if (querySnapshot.empty) {
-      html += `<p style="text-align: center; color: #a0aec0; padding: 20px;">No scores recorded yet. Be the first!</p>`;
+      html += `<p style="text-align: center; color: #64748b; padding: 30px 10px; font-weight: 800; font-size: clamp(14px, 4vw, 16px);">No scores recorded yet.<br>Be the first to claim the top spot!</p>`;
     } else {
       let rank = 1;
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const isMe = window.currentUser && docSnap.id === window.currentUser.uid;
         
-        // Highlight active user row
-        const rowStyle = isMe 
-          ? "border: 1px solid var(--gold, #f4c053); background: rgba(244, 192, 83, 0.15); box-shadow: 0 0 10px rgba(244, 192, 83, 0.1);" 
-          : "background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);";
+        const rankClass = rank === 1 ? 'lb-rank-1' : rank === 2 ? 'lb-rank-2' : rank === 3 ? 'lb-rank-3' : 'lb-rank-other';
+        const meClass = isMe ? 'is-me' : '';
         
-        let medal = `<span style="color: #a0aec0; font-weight: 800;">#${rank}</span>`;
-        if (rank === 1) medal = "🥇";
-        else if (rank === 2) medal = "🥈";
-        else if (rank === 3) medal = "🥉";
+        const avatarUrl = data.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name || 'S')}&background=random&color=fff&bold=true`;
+        
+        let displayName = data.name || 'Anonymous';
+        if (isMe) displayName += ' <span style="font-size: clamp(9px, 2vw, 10px); color: #ff416c; vertical-align: middle; margin-left: 2px;">(YOU)</span>';
 
         html += `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; ${rowStyle}">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="font-size: 16px; width: 24px; text-align: center;">${medal}</div>
-              <div>
-                <div style="font-weight: 800; color: #ffffff; font-size: 13px;">
-                  ${data.name || 'Anonymous Seeker'} ${isMe ? '<span style="color: var(--gold, #f4c053); font-size: 10px;">(You)</span>' : ''}
-                </div>
-                <div style="color: #7a9c9f; font-size: 11px; font-weight: 600;">
-                  Words Found: ${data.wordsFound ? data.wordsFound.toLocaleString() : 0}
-                </div>
-              </div>
+          <div class="lb-row ${rankClass} ${meClass}">
+            <div class="lb-badge">${rank}</div>
+            <img src="${avatarUrl}" class="lb-avatar" alt="Avatar" onerror="this.src='https://ui-avatars.com/api/?name=A&background=e2e8f0'" />
+            
+            <div class="lb-details">
+              <div class="lb-name" title="${data.name || 'Anonymous'}">${displayName}</div>
+              <div class="lb-words">Words: ${data.wordsFound ? data.wordsFound.toLocaleString() : 0}</div>
             </div>
-            <div style="text-align: right;">
-              <span style="font-weight: 900; font-size: 15px; color: #2ecc71;">
-                ${data.score ? data.score.toLocaleString() : 0}
-              </span>
-              <small style="font-size: 9px; color: #a0aec0; display: block; text-transform: uppercase;">PTS</small>
+            
+            <div class="lb-score-box">
+              <span class="lb-trophy">🏆</span>
+              <span class="lb-score-text">${data.score ? data.score.toLocaleString() : 0}</span>
             </div>
           </div>
         `;
@@ -1506,8 +1814,8 @@ openOmniModal(
 
     html += `
         </div>
-        <div class="premium-dashboard-footer" style="margin-top: 14px;">
-          <span class="footer-pulse">●</span> Live Google Cloud Firestore Sync
+        <div class="lb-footer-ribbon">
+          Climb the ranks and be the champion!
         </div>
       </div>
     `;
@@ -1517,9 +1825,9 @@ openOmniModal(
   } catch (err) {
     console.error("Failed to fetch leaderboard:", err);
     document.getElementById('omni-modal-body').innerHTML = `
-      <div style="text-align: center; padding: 30px; color: #ff416c;">
-        <p style="font-weight: 700; margin-bottom: 10px;">Connection Interrupted</p>
-        <p style="font-size: 13px; color: #ccc;">Could not reach Google Cloud servers. Please verify your internet connection or database security rules.</p>
+      <div style="text-align: center; padding: 30px 16px; color: #ef4444; background: #fff; border-radius: 20px;">
+        <p style="font-weight: 900; font-size: clamp(16px, 5vw, 20px); margin-bottom: 12px; text-transform: uppercase;">Connection Interrupted</p>
+        <p style="font-size: clamp(12px, 3.5vw, 14px); font-weight: 700; color: #64748b;">Could not reach Google Cloud servers. Please verify your internet connection or database security rules.</p>
       </div>
     `;
   }
@@ -1554,6 +1862,7 @@ function generateLeaderboardRow(user) {
     </div>
   `;
 }
+
 </script>
 </body>
 </html>
