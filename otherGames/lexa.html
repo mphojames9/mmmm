@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echo & Ink — Premium Language Masterclass & Analytics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0b0b0d;
@@ -39,7 +42,8 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            overflow: hidden; /* Prevent background and body scroll to avoid top/bottom empty spaces */
+            overflow: hidden;
+            /* Prevent background and body scroll to avoid top/bottom empty spaces */
             padding: 1.5rem;
             position: relative;
         }
@@ -51,7 +55,7 @@
             transform: translate(-50%, 0);
             width: 100%;
             height: 600px;
-            background: radial-gradient(circle, rgba(223, 177, 91, 0.05) 0%, rgba(0,0,0,0) 80%);
+            background: radial-gradient(circle, rgba(223, 177, 91, 0.05) 0%, rgba(0, 0, 0, 0) 80%);
             z-index: -1;
             pointer-events: none;
         }
@@ -121,13 +125,15 @@
             display: none;
             width: 100%;
             max-width: 900px;
-            max-height: calc(100dvh - 160px); /* Fits perfect vertical sizing snugly */
-            overflow-y: auto; /* Fallback scrolling inside the card if contents overflow on tiny windows */
+            max-height: calc(100dvh - 160px);
+            /* Fits perfect vertical sizing snugly */
+            overflow-y: auto;
+            /* Fallback scrolling inside the card if contents overflow on tiny windows */
             background: var(--bg-secondary);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 2rem 2.5rem;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
             text-align: center;
             backdrop-filter: blur(12px);
             z-index: 10;
@@ -143,22 +149,32 @@
         .screen::-webkit-scrollbar {
             width: 6px;
         }
+
         .screen::-webkit-scrollbar-track {
             background: transparent;
         }
+
         .screen::-webkit-scrollbar-thumb {
             background-color: var(--accent-gold);
             border-radius: 3px;
         }
 
         .screen.active {
-            display: flex; /* Changed from block to flex to support internal alignments and height optimization */
+            display: flex;
+            /* Changed from block to flex to support internal alignments and height optimization */
             animation: fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .tagline {
@@ -210,7 +226,7 @@
         /* World Class Executive Analytics Matrix Dashboard */
         .dashboard-panel {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 14px;
             padding: 1.5rem;
             text-align: left;
@@ -281,7 +297,7 @@
         .iq-progress-track {
             width: 100%;
             height: 3px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 2px;
             margin-top: 0.8rem;
             overflow: hidden;
@@ -400,7 +416,7 @@
 
         .btn-speaker {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             width: 56px;
             height: 56px;
             border-radius: 50%;
@@ -439,7 +455,7 @@
             width: 100%;
             background: transparent;
             border: none;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
             color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
             font-weight: 200;
@@ -561,12 +577,26 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-8px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(8px);
+            }
         }
 
-        .shake { animation: shake 0.4s ease-in-out; }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
 
         /* Session Resolution Analytics Screen Layout */
         .analytics-matrix-container {
@@ -582,16 +612,16 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.03);
-            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 1rem;
             text-align: center;
         }
 
         .results-score {
             font-family: 'Cinzel', serif;
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             color: var(--accent-gold);
             line-height: 1;
         }
@@ -613,9 +643,9 @@
         }
 
         .analysis-block-right {
-            background: rgba(255,255,255,0.01);
+            background: rgba(255, 255, 255, 0.01);
             border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
             padding: 1.5rem;
         }
 
@@ -624,7 +654,7 @@
             justify-content: space-between;
             margin-bottom: 0.8rem;
             font-size: 0.85rem;
-            border-bottom: 1px dashed rgba(255,255,255,0.05);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
             padding-bottom: 0.5rem;
         }
 
@@ -647,42 +677,56 @@
             body {
                 padding: 1rem;
             }
-            .mode-select-container, .metrics-grid, .analytics-matrix-container { 
-                grid-template-columns: 1fr; 
+
+            .mode-select-container,
+            .metrics-grid,
+            .analytics-matrix-container {
+                grid-template-columns: 1fr;
                 gap: 1rem;
             }
-            h1 { font-size: 2rem; }
-            .screen { 
-                padding: 1.5rem 1rem; 
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .screen {
+                padding: 1.5rem 1rem;
                 border-radius: 12px;
                 max-height: calc(100dvh - 120px);
             }
-            .btn-back { 
-                position: relative; 
-                top: 0; 
-                left: 0; 
-                margin-bottom: 1rem; 
+
+            .btn-back {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 1rem;
                 align-self: flex-start;
             }
+
             .sentence-display {
                 font-size: 1.1rem;
                 padding: 1.2rem;
                 min-height: auto;
             }
+
             .mcq-wrapper {
                 grid-template-columns: 1fr;
                 gap: 0.8rem;
             }
+
             .btn-mcq {
                 padding: 1rem;
                 font-size: 1rem;
             }
+
             .keyboard-container {
                 gap: 4px;
             }
+
             .keyboard-row {
                 gap: 3px;
             }
+
             .key-btn {
                 height: 38px;
                 min-width: auto;
@@ -691,9 +735,11 @@
                 font-size: 0.85rem;
                 padding: 0;
             }
+
             .key-wide {
                 font-size: 0.7rem;
             }
+
             .dashboard-title {
                 flex-direction: column;
                 align-items: flex-start;
@@ -702,15 +748,17 @@
             }
         }
 
-                /* Landscape / Tiny Height Viewports Fallback */
+        /* Landscape / Tiny Height Viewports Fallback */
         @media (max-height: 600px) {
             body {
                 height: auto;
                 min-height: 100vh;
                 min-height: 100dvh;
-                overflow-y: auto; /* Fallback scrolling for extreme short screens */
+                overflow-y: auto;
+                /* Fallback scrolling for extreme short screens */
                 padding: 1rem;
             }
+
             .screen {
                 max-height: none;
                 overflow-y: visible;
@@ -718,27 +766,33 @@
         }
 
         @media (max-width: 480px) {
-            h1 { 
-                font-size: 1.5rem; 
-                letter-spacing: 4px; 
+            h1 {
+                font-size: 1.5rem;
+                letter-spacing: 4px;
             }
+
             .subtitle {
                 font-size: 0.7rem;
             }
+
             .tagline {
                 font-size: 0.95rem;
             }
+
             .dashboard-panel {
                 padding: 1.2rem 1rem;
             }
+
             .dashboard-title {
                 font-size: 0.9rem;
                 letter-spacing: 1px;
             }
+
             .btn-gold {
                 padding: 1rem;
                 font-size: 0.7rem;
             }
+
             .metric-value-iq {
                 font-size: 1.8rem;
             }
@@ -747,87 +801,90 @@
         @media (max-width: 370px) {
 
             h1 {
-                    font-size: 1.25rem;
+                font-size: 1.25rem;
             }
 
             .speaker-box {
-                    margin-bottom: .5rem;
+                margin-bottom: .5rem;
             }
 
             .sentence-display {
-                    font-size: .85rem;
-                }
+                font-size: .85rem;
+            }
 
-                        .btn-speaker {
-            width: 36px;
-            height: 36px;
-        }
+            .btn-speaker {
+                width: 36px;
+                height: 36px;
+            }
 
-        .btn-speaker svg {
-            width: 15px;
-           
-        }
+            .btn-speaker svg {
+                width: 15px;
 
-        .sentence-display{
-         line-height: 1;
-        }
+            }
 
- 
+            .sentence-display {
+                line-height: 1;
+            }
 
-        .status-row {
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-    font-weight: 400;
-    flex-wrap: wrap;
-    gap:5px;
-}
+
+
+            .status-row {
+                font-size: 0.7rem;
+                letter-spacing: 1px;
+                margin-bottom: 1rem;
+                font-weight: 400;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
             .btn-mcq {
-        padding: .5rem;
-        font-size: .8rem;
-    }
-    }
+                padding: .5rem;
+                font-size: .8rem;
+            }
+        }
 
-    @media (max-height: 679px) {
+        @media (max-height: 679px) {
             .speaker-box {
                 background: transparent;
-    color: var(--accent-gold);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    outline: none;
-    position: absolute;
-    bottom: -5px;
-    right: 5px;
-    z-index: 100;
-    align-items: center;
-    gap: 8px;
-    }
+                color: var(--accent-gold);
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+                outline: none;
+                position: absolute;
+                bottom: -5px;
+                right: 5px;
+                z-index: 100;
+                align-items: center;
+                gap: 8px;
+            }
 
-    }
+        }
 
-    .span {
-        display:flex;
-        justify-content: space-between;
-        width: 100%;
-    }
+        .span {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
 
-    /* Dashboard Modal Overlay Styles */
+        /* Dashboard Modal Overlay Styles */
         .dashboard-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(11, 11, 13, 0.85); /* Matches var(--bg-primary) with transparency */
+            background: rgba(11, 11, 13, 0.85);
+            /* Matches var(--bg-primary) with transparency */
             backdrop-filter: blur(8px);
             z-index: 1000;
-            display: none; /* Hidden by default */
+            display: none;
+            /* Hidden by default */
             justify-content: center;
             align-items: center;
             padding: 1.5rem;
@@ -847,7 +904,7 @@
             max-width: 900px;
             background: var(--bg-secondary);
             border: 1px solid var(--accent-gold);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 25px var(--accent-gold-glow);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 25px var(--accent-gold-glow);
             transform: translateY(20px);
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -891,26 +948,59 @@
         .tutorial-pointer svg {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.6));
+            filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.6));
             animation: pointBounce 0.8s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes pointBounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(10px); } 
+        #meta-discipline {
+            text-transform: lowercase;
         }
 
+        @keyframes pointBounce {
+            from {
+                transform: translateY(0);
+            }
 
+            to {
+                transform: translateY(10px);
+            }
+        }
 
-        
+        @media (max-height:755px) {
+            .results-score {
+                font-size: 2.5rem;
+                line-height: 0.5;
+            }
+        }
+
+        @media (max-height:720px) {
+            .iq-metric-display {
+                margin-top: .5rem;
+                font-size: 1rem;
+                font-weight: 500;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .screen {
+                padding: .5rem 1rem;
+            }
+
+            .analysis-block-right {
+                padding: .6rem;
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <div class="ambient-glow"></div>
 
     <button id="btn-back" class="btn-back">
-        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+        </svg>
         Menu
     </button>
 
@@ -920,17 +1010,19 @@
 
     <main id="start-screen" class="screen active">
         <p class="tagline">
-            An advanced diagnostic interface mapping real-time verbal intelligence, syntactic structural calibration, and contextual oversight tracking.
+            An advanced diagnostic interface mapping real-time verbal intelligence, syntactic structural calibration,
+            and contextual oversight tracking.
         </p>
-        
-<div class="main-menu-grid">
+
+        <div class="main-menu-grid">
             <div class="mode-select-container">
                 <button class="btn-gold" id="btn-start-spelling">Orthography</button>
                 <button class="btn-gold" id="btn-start-grammar">Syntax</button>
                 <button class="btn-gold" id="btn-start-proofread">Proofreading</button>
-                
+
                 <!-- NEW BUTTON TO OPEN MODAL -->
-                <button class="btn-gold" id="btn-open-dashboard" style="grid-column: 1 / -1; margin-top: 0.5rem;">View Intelligence Profile</button>
+                <button class="btn-gold" id="btn-open-dashboard" style="grid-column: 1 / -1; margin-top: 0.5rem;">View
+                    Intelligence Profile</button>
             </div>
         </div>
 
@@ -955,14 +1047,18 @@
         <div class="speaker-box">
             <button class="btn-speaker" id="btn-speak" title="Trigger Phonetic Synthesis">
                 <svg viewBox="0 0 24 24">
-                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    <path
+                        d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
                 </svg>
             </button>
         </div>
 
         <div id="text-input-container" class="input-wrapper">
-            <div id="correction-badge" style="font-size: 0.8rem; color: var(--accent-gold); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;"></div>
-            <input type="text" id="input-word" class="word-input" autocomplete="off" spellcheck="false" placeholder="Awaiting Input...">
+            <div id="correction-badge"
+                style="font-size: 0.8rem; color: var(--accent-gold); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">
+            </div>
+            <input type="text" id="input-word" class="word-input" autocomplete="off" spellcheck="false"
+                placeholder="Awaiting Input...">
             <div id="virtual-keyboard" class="keyboard-container"></div>
         </div>
 
@@ -971,20 +1067,22 @@
 
     <main id="results-screen" class="screen">
         <div class="subtitle">Diagnostic Analysis Finalized</div>
-        
+
         <div class="analytics-matrix-container">
             <div class="analysis-block-left">
                 <div class="results-score" id="final-score">0 / 0</div>
                 <div class="results-score-label">Accuracy Ratio</div>
                 <div class="iq-metric-display" id="final-iq-display">IQ 100</div>
-                <div class="subtitle" style="font-size:0.65rem; margin-top:0.2rem; color:var(--accent-gold);" id="iq-classification">Standard Calibration</div>
+                <div class="subtitle" style="font-size:0.65rem; margin-top:0.2rem; color:var(--accent-gold);"
+                    id="iq-classification">Standard Calibration</div>
             </div>
-            
+
             <div class="analysis-block-right">
                 <div class="analysis-row"><span>Discipline Assessed:</span><span id="meta-discipline">-</span></div>
                 <div class="analysis-row"><span>Gross Session Score:</span><span id="meta-score">0</span></div>
                 <div class="analysis-row"><span>Highest Operational Streak:</span><span id="meta-streak">0</span></div>
-                <div class="analysis-row"><span>Critical Volatility Penalties:</span><span id="meta-penalties">0</span></div>
+                <div class="analysis-row"><span>Critical Volatility Penalties:</span><span id="meta-penalties">0</span>
+                </div>
                 <div class="analysis-row"><span>Cognitive Tier Status:</span><span id="meta-tier">-</span></div>
             </div>
         </div>
@@ -993,42 +1091,51 @@
         <button class="btn-gold" id="btn-restart">Recalibrate Profile</button>
     </main>
 
-            <!-- NEW MODAL OVERLAY -->
-        <div class="dashboard-modal-overlay" id="dashboard-modal">
-            <div class="dashboard-panel modal-content">
-                <button class="btn-close-modal" id="btn-close-dashboard" title="Close Panel">&times;</button>
-                <div class="dashboard-title">
-                    <span>COGNITIVE INTELLIGENCE PROFILE</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Montserrat'; margin-right:3rem;" id="total-sessions">Sessions: 0</span>
+    <!-- NEW MODAL OVERLAY -->
+    <div class="dashboard-modal-overlay" id="dashboard-modal">
+        <div class="dashboard-panel modal-content">
+            <button class="btn-close-modal" id="btn-close-dashboard" title="Close Panel">&times;</button>
+            <div class="dashboard-title">
+                <span>COGNITIVE INTELLIGENCE PROFILE</span>
+                <span
+                    style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Montserrat'; margin-right:3rem;"
+                    id="total-sessions">Sessions: 0</span>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Orthography IQ</div>
+                    <div class="metric-value-iq" id="dash-spelling-iq">100</div>
+                    <div class="metric-subtext">Accuracy: <span id="dash-spelling-acc">0%</span></div>
+                    <div class="iq-progress-track">
+                        <div id="dash-spelling-fill" class="iq-progress-fill"></div>
+                    </div>
                 </div>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Orthography IQ</div>
-                        <div class="metric-value-iq" id="dash-spelling-iq">100</div>
-                        <div class="metric-subtext">Accuracy: <span id="dash-spelling-acc">0%</span></div>
-                        <div class="iq-progress-track"><div id="dash-spelling-fill" class="iq-progress-fill"></div></div>
+                <div class="metric-card">
+                    <div class="metric-label">Syntax IQ</div>
+                    <div class="metric-value-iq" id="dash-grammar-iq">100</div>
+                    <div class="metric-subtext">Accuracy: <span id="dash-grammar-acc">0%</span></div>
+                    <div class="iq-progress-track">
+                        <div id="dash-grammar-fill" class="iq-progress-fill"></div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Syntax IQ</div>
-                        <div class="metric-value-iq" id="dash-grammar-iq">100</div>
-                        <div class="metric-subtext">Accuracy: <span id="dash-grammar-acc">0%</span></div>
-                        <div class="iq-progress-track"><div id="dash-grammar-fill" class="iq-progress-fill"></div></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Proofreading IQ</div>
-                        <div class="metric-value-iq" id="dash-proofread-iq">100</div>
-                        <div class="metric-subtext">Accuracy: <span id="dash-proofread-acc">0%</span></div>
-                        <div class="iq-progress-track"><div id="dash-proofread-fill" class="iq-progress-fill"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Proofreading IQ</div>
+                    <div class="metric-value-iq" id="dash-proofread-iq">100</div>
+                    <div class="metric-subtext">Accuracy: <span id="dash-proofread-acc">0%</span></div>
+                    <div class="iq-progress-track">
+                        <div id="dash-proofread-fill" class="iq-progress-fill"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <footer></footer>
     <!-- Floating Tutorial Pointer -->
     <div id="tutorial-pointer" class="tutorial-pointer">
         <svg viewBox="0 0 24 24" fill="var(--accent-gold)">
-            <path d="M12 2C10.9 2 10 2.9 10 4V13.5L7.4 11.2C6.7 10.6 5.6 10.6 4.9 11.3C4.2 12 4.2 13 4.9 13.7L10.6 19.4C11.5 20.3 12.7 20.8 14 20.8H17C19.2 20.8 21 19 21 16.8V10C21 8.9 20.1 8 19 8C18.8 8 18.6 8.1 18.4 8.1V7C18.4 5.9 17.5 5 16.4 5C16.2 5 16 5.1 15.8 5.1V4C15.8 2.9 14.9 2 13.8 2H12Z" />
+            <path
+                d="M12 2C10.9 2 10 2.9 10 4V13.5L7.4 11.2C6.7 10.6 5.6 10.6 4.9 11.3C4.2 12 4.2 13 4.9 13.7L10.6 19.4C11.5 20.3 12.7 20.8 14 20.8H17C19.2 20.8 21 19 21 16.8V10C21 8.9 20.1 8 19 8C18.8 8 18.6 8.1 18.4 8.1V7C18.4 5.9 17.5 5 16.4 5C16.2 5 16 5.1 15.8 5.1V4C15.8 2.9 14.9 2 13.8 2H12Z" />
         </svg>
     </div>
 
@@ -1125,7 +1232,7 @@
             if (data) {
                 try {
                     profileMetrics = JSON.parse(data);
-                } catch(e) {
+                } catch (e) {
                     console.error("Profile corrupted, rebuilding profile matrix map data layers.");
                 }
             }
@@ -1139,7 +1246,7 @@
 
         function renderGlobalDashboardUI() {
             document.getElementById('total-sessions').textContent = `Sessions: ${profileMetrics.totalSessions}`;
-            
+
             // Render Orthography Metric Array
             document.getElementById('dash-spelling-iq').textContent = Math.round(profileMetrics.spelling.computedIQ);
             document.getElementById('dash-spelling-acc').textContent = `${Math.round(profileMetrics.spelling.recordAccuracy)}%`;
@@ -1208,16 +1315,16 @@
             osc.start(); osc.stop(now + 0.28);
         }
 
-// --- ADVANCED VOCAL SYNTHESIS ENGINE ---
+        // --- ADVANCED VOCAL SYNTHESIS ENGINE ---
         let availableVoices = [];
         let preferredVoice = null;
 
         // Browsers load voices asynchronously. This captures them as soon as they are ready.
         function loadPremiumVoices() {
             availableVoices = synthesizer.getVoices();
-            
+
             // Prioritize ultra-realistic voices based on device ecosystem
-            preferredVoice = 
+            preferredVoice =
                 availableVoices.find(v => v.name.includes("Neural") && v.lang.startsWith("en")) || // Edge/Windows high-fidelity
                 availableVoices.find(v => (v.name.includes("Premium") || v.name.includes("Enhanced")) && v.lang.startsWith("en")) || // Apple high-fidelity
                 availableVoices.find(v => v.name.includes("Google UK English Female") || v.name.includes("Google US English")) || // Google standard
@@ -1241,10 +1348,10 @@
             const sanitizedText = text.replace(/_+/g, "blank").trim();
 
             const utterance = new SpeechSynthesisUtterance(sanitizedText);
-            
+
             // Fallback in case voices didn't load in time
             if (availableVoices.length === 0) loadPremiumVoices();
-            
+
             if (preferredVoice) {
                 utterance.voice = preferredVoice;
             }
@@ -1252,7 +1359,7 @@
             // Premium acoustic adjustments
             utterance.rate = speed;
             utterance.pitch = 0.92; // Slightly lowered pitch for a richer, more resonant and professional tone
-            utterance.volume = 1.0; 
+            utterance.volume = 1.0;
 
             // Add a micro-delay to allow the DOM to render visual cues before audio triggers
             setTimeout(() => {
@@ -1260,7 +1367,7 @@
             }, 50);
         }
 
-function buildKeyboardMatrix() {
+        function buildKeyboardMatrix() {
             virtualKeyboard.innerHTML = '';
             const rows = [
                 ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -1274,15 +1381,15 @@ function buildKeyboardMatrix() {
                     const btn = document.createElement('button');
                     btn.className = 'key-btn';
                     btn.dataset.key = char; // Allows the tutorial to find the key
-                    
+
                     if (char === '⌫') {
                         btn.classList.add('key-wide');
                         btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>`;
-                        btn.addEventListener('click', () => { 
-                            inputWord.value = inputWord.value.slice(0, -1); 
-                            playClickTone(); 
-                            inputWord.focus(); 
-                            if(currentIndex === 0) setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                        btn.addEventListener('click', () => {
+                            inputWord.value = inputWord.value.slice(0, -1);
+                            playClickTone();
+                            inputWord.focus();
+                            if (currentIndex === 0) setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
                         });
                     } else if (char === '↵') {
                         btn.classList.add('key-wide', 'key-submit');
@@ -1290,11 +1397,11 @@ function buildKeyboardMatrix() {
                         btn.addEventListener('click', () => processTokenVerification());
                     } else {
                         btn.textContent = char;
-                        btn.addEventListener('click', () => { 
-                            inputWord.value += char; 
-                            playClickTone(); 
-                            inputWord.focus(); 
-                            if(currentIndex === 0) setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
+                        btn.addEventListener('click', () => {
+                            inputWord.value += char;
+                            playClickTone();
+                            inputWord.focus();
+                            if (currentIndex === 0) setTimeout(() => updateTypingPointer(inputWord.value.toLowerCase()), 50);
                         });
                     }
                     elementRow.appendChild(btn);
@@ -1343,12 +1450,12 @@ function buildKeyboardMatrix() {
             btnBack.style.display = (targetScreen === screenStart) ? 'none' : 'flex';
         }
 
-       function stageAssessmentMatrix() {
+        function stageAssessmentMatrix() {
             const item = gameItems[currentIndex];
             attemptsLeft = 2;
             selectedProofreadToken = null;
             selectedProofreadWord = "";
-            
+
             // Save active index progress of this mode to localStorage
             profileMetrics[currentMode].activeProgress = currentIndex;
             saveProfileToLocalStorage();
@@ -1388,7 +1495,7 @@ function buildKeyboardMatrix() {
                     const token = document.createElement('span');
                     token.className = 'word-token';
                     token.textContent = word + " ";
-                   token.addEventListener('click', () => {
+                    token.addEventListener('click', () => {
                         playClickTone();
                         document.querySelectorAll('.word-token').forEach(t => t.className = 'word-token');
                         token.className = 'word-token selected-error';
@@ -1444,10 +1551,10 @@ function buildKeyboardMatrix() {
             }
         }
 
-       function processSyntaxOption(element, choice) {
+        function processSyntaxOption(element, choice) {
             if (element.disabled) return;
             const correctAnswer = gameItems[currentIndex].answer;
-            
+
             if (choice === correctAnswer) {
                 element.classList.add('correct');
                 executeSuccessState(correctAnswer);
@@ -1455,7 +1562,7 @@ function buildKeyboardMatrix() {
             } else {
                 element.classList.add('wrong');
                 executeFailureState(element);
-                
+
                 // SMART CORRECTION: Point to the correct button if they fail on level 1
                 if (currentIndex === 0) {
                     const btns = document.querySelectorAll('.btn-mcq');
@@ -1499,7 +1606,7 @@ function buildKeyboardMatrix() {
             correctCount++;
             currentStreak++;
             if (currentStreak > peakStreak) peakStreak = currentStreak;
-            
+
             // Add to unified global score
             profileMetrics.globalScore += 100;
             saveProfileToLocalStorage();
@@ -1539,7 +1646,7 @@ function buildKeyboardMatrix() {
             // Deduct exactly 30% of current unified global score
             profileMetrics.globalScore = Math.round(profileMetrics.globalScore * 0.7);
             saveProfileToLocalStorage();
-            
+
             wordStreakLabel.textContent = `Streak: ${currentStreak}`;
             scoreDisplay.textContent = `Score: ${profileMetrics.globalScore}`;
 
@@ -1622,7 +1729,7 @@ function buildKeyboardMatrix() {
             // Setup display output
             document.getElementById('final-score').textContent = `${correctCount} / ${gameItems.length}`;
             document.getElementById('final-iq-display').textContent = `IQ ${Math.round(dynamicComputedIQ)}`;
-            
+
             // Classification categorization Mapping
             let tier = "Standard Performance";
             if (dynamicComputedIQ >= 140) tier = "Theoretical Genius Tier Status";
@@ -1636,15 +1743,6 @@ function buildKeyboardMatrix() {
             document.getElementById('meta-streak').textContent = peakStreak;
             document.getElementById('meta-penalties').textContent = penaltyCount;
             document.getElementById('meta-tier').textContent = tier.split(" ")[0];
-
-            // Feedback strings
-            if (baseAccuracy === 100) {
-                document.getElementById('results-feedback').textContent = "Diagnostic scan registers immaculate operational precision. Cognitive pathways demonstrate dynamic fluid adaptation and absolute error mitigation under testing constraints.";
-            } else if (baseAccuracy >= 70) {
-                document.getElementById('results-feedback').textContent = "Advanced lexical awareness confirmed. Minimal structural variance detected; execution metrics show consistent pattern evaluation performance layers.";
-            } else {
-                document.getElementById('results-feedback').textContent = "Stabilized linguistic baseline tracking. System recommends processing track repetition sequences to refine rapid semantic validation and lower accuracy volatility.";
-            }
 
             saveProfileToLocalStorage();
             showScreen(screenResults);
@@ -1687,40 +1785,40 @@ function buildKeyboardMatrix() {
         });
 
         // Dashboard Modal Interactivity
-            const dashboardModal = document.getElementById('dashboard-modal');
-            
-            document.getElementById('btn-open-dashboard').addEventListener('click', () => {
-                playClickTone(); // Utilizes your existing audio context function
-                dashboardModal.classList.add('active');
-            });
+        const dashboardModal = document.getElementById('dashboard-modal');
 
-            document.getElementById('btn-close-dashboard').addEventListener('click', () => {
-                playClickTone();
+        document.getElementById('btn-open-dashboard').addEventListener('click', () => {
+            playClickTone(); // Utilizes your existing audio context function
+            dashboardModal.classList.add('active');
+        });
+
+        document.getElementById('btn-close-dashboard').addEventListener('click', () => {
+            playClickTone();
+            dashboardModal.classList.remove('active');
+        });
+
+        // Allow closing the modal by clicking on the background overlay
+        dashboardModal.addEventListener('click', (e) => {
+            if (e.target === dashboardModal) {
                 dashboardModal.classList.remove('active');
-            });
-
-            // Allow closing the modal by clicking on the background overlay
-            dashboardModal.addEventListener('click', (e) => {
-                if(e.target === dashboardModal) {
-                    dashboardModal.classList.remove('active');
-                }
-            });
+            }
+        });
 
 
         function pointToElement(element) {
             if (!element) return;
             const pointer = document.getElementById('tutorial-pointer');
             const rect = element.getBoundingClientRect();
-            
+
             // Align the tip of the finger just below the center of the target
-            pointer.style.left = `${rect.left + (rect.width / 2) - 16}px`; 
+            pointer.style.left = `${rect.left + (rect.width / 2) - 16}px`;
             pointer.style.top = `${rect.top + (rect.height / 2) + 5}px`;
             pointer.classList.add('active');
         }
 
         function pointToKeyboardKey(char) {
             const target = document.querySelector(`.key-btn[data-key="${char}"]`);
-            if(target) pointToElement(target);
+            if (target) pointToElement(target);
         }
 
         function hidePointer() {
@@ -1751,4 +1849,5 @@ function buildKeyboardMatrix() {
         }
     </script>
 </body>
+
 </html>

@@ -1544,8 +1544,8 @@ function openSoundSettingsModal() {
                 </div>
             </div>
 
-            <div class="settings-control-card">
-                <div class="settings-meta-row">
+            <div class="settings-control-card" style="display:none;">
+                <div class="settings-meta-row" >
                     <div class="settings-label-group">
                         <span class="settings-title-text">Ambient Music</span>
                         <span class="settings-sub-text" id="music-vol-label">${musicVol}%</span>
@@ -1653,11 +1653,12 @@ openOmniModal("", `
         </h3>
         
         <p style="font-size: 16px; font-weight: 600; margin: 0 0 10px 0;">
-            Can you find all <span style="color: #E8B954;">${selectedWords.length}</span> hidden words before time runs out?
+            Can you find all <span style="color: #E8B954;">${selectedWords.length}</span> hidden words <br/> before time runs out ?
         </p>
         
         <p style="color: #94A3B8; font-size: 13px; margin: 0 0 20px 0;">
-            No power-ups allowed—just pure focus and fast reflexes.
+            No power-ups allowed. <br/>
+            Just pure focus and fast reflexes.
         </p>
         
         <div style="display: flex; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
@@ -1665,7 +1666,7 @@ openOmniModal("", `
             <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <span style="color: #94A3B8; font-size: 12px; margin-bottom: 6px;">Time Limit:</span>
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 18px; font-weight: 700;">${timeAllocated} Sec</span>
+                    <span style="font-size:14px; font-weight: 700;">${timeAllocated} Sec</span>
                     <img src="./images/clock.png" style="height: 24px;" alt="clock">
                 </div>
             </div>
@@ -2216,7 +2217,7 @@ const renderGameCards = () => {
 const gamesHtml = `
     <div class="pgc-container">
         <p class="pgc-header">
-            Expand your library
+            
         </p>
 
         <div class="pgc-list">
@@ -2281,8 +2282,8 @@ const gamesHtml = `
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 18px;
             padding: 14px 16px;
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 8px 20px rgb(0 0 0 / 5%);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
         }
@@ -2296,7 +2297,7 @@ const gamesHtml = `
             width: 4px;
             height: 100%;
             background: var(--glow-color, #ffffff);
-            opacity: 0;
+            opacity: 1;
             transition: opacity 0.3s ease;
         }
 
@@ -2332,7 +2333,7 @@ const gamesHtml = `
         
         .premium-game-card .pgc-content h4 {
             margin: 0;
-            color: #ffffff;
+            color: var(--theme-text);
             font-size: 16px;
             font-weight: 800;
             letter-spacing: 0.5px;
@@ -2353,8 +2354,8 @@ const gamesHtml = `
 
         /* Call to Action Arrow */
         .premium-game-card .pgc-arrow {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(244, 192, 83, 0.15);
+            border: 1px solid rgba(244, 192, 83, 0.4);;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -2365,28 +2366,6 @@ const gamesHtml = `
             flex-shrink: 0;
             margin-left: 12px;
             transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
-        }
-
-        /* Hover & Active Physics */
-        .premium-game-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
-            border-color: rgba(255, 255, 255, 0.25);
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 14px 28px rgba(0, 0, 0, 0.35);
-        }
-        
-        .premium-game-card:hover::before {
-            opacity: 1;
-        }
-
-        .premium-game-card:hover .pgc-img {
-            transform: scale(1.12);
-        }
-
-        .premium-game-card:hover .pgc-arrow {
-            background: rgba(244, 192, 83, 0.15);
-            border-color: rgba(244, 192, 83, 0.4);
-            transform: translateX(4px) scale(1.08);
         }
 
         .premium-game-card:active {
@@ -2418,7 +2397,7 @@ const gamesHtml = `
         }
     </style>
 `;
-    openOmniModal('Premium Arcade', gamesHtml);
+    openOmniModal('More Games', gamesHtml);
 }
 // Locks the mission by saving today's date string to local storage
 function lockDailyMission() {
@@ -2428,12 +2407,16 @@ function lockDailyMission() {
 
 // Unique list of all game assets to preload
 const PRELOAD_IMAGES = [
-    'images/nature.png',   // Core background image
-    'images/coin.png',     // Floating animations & button economy
-    'images/coins.png',    // 500-coin bonus graphic
-    'images/camera.png',   // Ad power-up buttons
-    'images/clock.png',    // Time Attack mission UI
-    'images/gold.png'      // Daily Mission reward icons
+    './images/nature.png',   // Core background image
+    './images/coin.png',     // Floating animations & button economy
+    './images/coins.png',    // 500-coin bonus graphic
+    './images/camera.png',   // Ad power-up buttons
+    './images/clock.png', 
+    './images/gold.png',
+    './images/quiz.png', 
+    './images/2048.png', 
+    './images/echo.png',    // Time Attack mission UI
+    './images/gold.png'      // Daily Mission reward icons
 ];
 
 /**
@@ -2471,7 +2454,6 @@ function preloadGameAssets(callback) {
                 if (callback) callback();
             }
         };
-
         img.src = src;
     });
 }
@@ -2551,8 +2533,3 @@ window.addEventListener('DOMContentLoaded', deployPremiumAppPipeline);
 function returnToHomePage() {
     window.location.href = 'index.html'; 
 }
-
-
-
-// NOTE: We removed the standalone bootOmniDashboard() call from here 
-// because it is now safely triggered inside deployPremiumAppPipeline()
